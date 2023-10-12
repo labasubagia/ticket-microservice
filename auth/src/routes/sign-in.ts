@@ -2,7 +2,7 @@ import express from 'express'
 
 const router = express.Router()
 
-router.post('/api/users/sign-in', (req, res) => {
+router.post('/api/users/sign-in', async (req, res) => {
     res.send('Hi there!')
 })
 

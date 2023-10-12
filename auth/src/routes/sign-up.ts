@@ -16,7 +16,7 @@ router.post('/api/users/sign-up',
             isLength({ min: 4, max: 20 }).
             withMessage('Password must be between 4 and 20 characters'),
     ],
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             throw new RequestValidationError(errors.array())
@@ -25,6 +25,7 @@ router.post('/api/users/sign-up',
         throw new DatabaseConnectionError()
 
         res.send('Hi there!')
-    })
+    },
+)
 
 export { router as signUpRouter }

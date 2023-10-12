@@ -2,7 +2,7 @@ import express from 'express'
 
 const router = express.Router()
 
-router.post('/api/users/sign-out', (req, res) => {
+router.post('/api/users/sign-out', async (req, res) => {
     res.send('Hi there!')
 })
 
