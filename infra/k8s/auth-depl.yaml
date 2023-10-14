@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth-depl
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -15,13 +15,17 @@ spec:
       containers:
         - name: auth
           image: dreamcheck/ticket-auth
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: auth-srv
 spec:
-  selector: 
+  selector:
     app: auth
   ports:
     - name: auth
