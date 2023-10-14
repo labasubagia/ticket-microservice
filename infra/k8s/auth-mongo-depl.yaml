@@ -4,8 +4,8 @@ metadata:
   name: auth-mongo-depl
 spec:
   replicas: 1
-  selector: 
-    matchLabels: 
+  selector:
+    matchLabels:
       app: auth-mongo
   template:
     metadata:
@@ -15,6 +15,10 @@ spec:
       containers:
         - name: auth-mongo
           image: mongo
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -27,4 +31,4 @@ spec:
     - name: db
       protocol: TCP
       port: 27017
-      targetPort: 27017 
+      targetPort: 27017
