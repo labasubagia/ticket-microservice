@@ -19,6 +19,12 @@ spec:
             limits:
               cpu: "0.5"
               memory: "256Mi"
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
