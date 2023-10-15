@@ -2,6 +2,7 @@ import express from "express";
 import 'express-async-errors'
 import { json } from "express";
 import cookieSession from "cookie-session";
+import mongoose from "mongoose";
 
 import { currentUserRouter } from "./routes/current-user";
 import { signInRouter } from "./routes/sign-in";
@@ -9,7 +10,6 @@ import { signUpRouter } from "./routes/sign-up";
 import { signOutRouter } from "./routes/sign-out";
 import { errorHandler } from "./middlewares/error-handler";
 import { NotFoundError } from "./errors/not-found-error";
-import mongoose from "mongoose";
 
 const app = express()
 app.set('trust proxy', true)
