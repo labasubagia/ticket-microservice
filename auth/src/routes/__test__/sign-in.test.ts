@@ -31,7 +31,7 @@ it('fails when password incorrect', async () => {
 })
 
 
-it('set a cookie after successful sign up', async () => {
+it('set a cookie after successful sign in', async () => {
     await request(app)
         .post('/api/users/sign-up')
         .send({
