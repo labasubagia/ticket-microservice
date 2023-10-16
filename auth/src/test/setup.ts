@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 
-export let mongo: MongoMemoryServer
+let mongo: MongoMemoryServer
 
 beforeAll(async () => {
     process.env.JWT_KEY = 'asdf'
