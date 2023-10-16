@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../app";
 
-it('clear cookie after sign out', async () => {
+it('respond with detail of current user', async () => {
     const authResponse = await request(app)
         .post('/api/users/sign-up')
         .send({
