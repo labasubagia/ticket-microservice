@@ -11,12 +11,12 @@ jobs:
   test-auth-service:
     name: Test Auth Service
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./auth
     steps:
       - name: checkout
         uses: actions/checkout@v3
-
-      - name: go to auth service
-        run: cd auth
 
       - name: install pnpm
         uses: pnpm/action-setup@v2
