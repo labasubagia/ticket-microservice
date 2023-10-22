@@ -13,7 +13,7 @@ const formSchema = z.object({
   password: z.string().min(4).max(20)
 })
 
-export default function Login() {
+export default function SignUp() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
