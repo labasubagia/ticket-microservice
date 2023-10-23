@@ -7,6 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import axios, { AxiosError } from 'axios'
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -20,12 +21,19 @@ export default function SignUp() {
     defaultValues: {
       email: "",
       password: "",
-    }
+    },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // TODO: Submit here
-    console.log(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const res = await axios.post('/api/users/sign-up',  values)
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log('axios', error)
+        return 
+      }
+      console.log('else',error)
+    }
   }
 
   return (
