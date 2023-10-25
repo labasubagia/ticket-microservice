@@ -1,13 +1,18 @@
 'use client'
 
 import * as z from 'zod'
+import axios, { AxiosError } from 'axios'
+import { nanoid } from 'nanoid'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import axios, { AxiosError } from 'axios'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { useState } from 'react'
+import { ResponseError } from '@/types/error'
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -24,21 +29,41 @@ export default function SignUp() {
     },
   })
 
+  const [errors, setErrors] = useState<ResponseError[]>([])
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const res = await axios.post('/api/users/sign-up',  values)
+      await axios.post('/api/users/sign-up',  values)
+      setErrors([])
     } catch (error) {
       if (error instanceof AxiosError) {
-        console.log('axios', error)
+        setErrors(error?.response?.data?.errors ?? [])
         return 
       }
-      console.log('else',error)
+      setErrors([{message: (error as Error)?.message}])
     }
   }
 
   return (
     <main className={cn('p-4 px-8')}>
       <Form {...form}>
+        <h1 className='text-xl'>Sign Up</h1>
+
+        {(errors.length > 0) && (
+          <Alert variant={'destructive'} className={cn('mt-4 mb-2')}>
+            <ExclamationTriangleIcon className='h-4 w-4'/>
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              <ul>
+                {errors.map(error => {
+                  const message = error.field ? `Validation error on field ${error.field}: ${error.message}` : error.message
+                  return <li key={nanoid()}>{message}</li>
+                })}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField 
             control={form.control}
@@ -68,7 +93,7 @@ export default function SignUp() {
             )}
           />
 
-          <Button type="submit">Login</Button>
+          <Button type="submit">Send</Button>
         </form>
       </Form>
     </main>
