@@ -3,7 +3,6 @@
 import * as z from 'zod'
 import axios, { AxiosError } from 'axios'
 import { nanoid } from 'nanoid'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,7 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { ResponseError } from '@/types/error'
+import { useMutation } from 'react-query'
+import { handleErrors } from '@/lib/error'
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -32,20 +32,15 @@ export default function SignUp() {
     },
   })
 
-  const [errors, setErrors] = useState<ResponseError[]>([])
+  const signUp = async (payload: z.infer<typeof formSchema>) => axios.post('/api/users/sign-up',  payload)
+  const mutation = useMutation(signUp)
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      await axios.post('/api/users/sign-up',  values)
-      setErrors([])
-      router.push('/')
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        setErrors(error?.response?.data?.errors ?? [])
-        return 
-      }
-      setErrors([{message: (error as Error)?.message}])
-    }
+    mutation.mutate(values, {
+      onSuccess(data, variables, context) {
+        router.push('/')
+      },
+    })
   }
 
   return (
@@ -53,13 +48,13 @@ export default function SignUp() {
       <Form {...form}>
         <h1 className='text-xl'>Sign Up</h1>
 
-        {(errors.length > 0) && (
+        {mutation.isError && (
           <Alert variant={'destructive'} className={cn('mt-4 mb-2')}>
             <ExclamationTriangleIcon className='h-4 w-4'/>
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>
               <ul>
-                {errors.map(error => {
+                {handleErrors(mutation.error).map(error => {
                   const message = error.field ? `Validation error on field ${error.field}: ${error.message}` : error.message
                   return <li key={nanoid()}>{message}</li>
                 })}
