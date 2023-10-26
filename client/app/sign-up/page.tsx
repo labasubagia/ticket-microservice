@@ -3,15 +3,16 @@
 import * as z from 'zod'
 import axios, { AxiosError } from 'axios'
 import { nanoid } from 'nanoid'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { cn } from '@/lib/utils'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
-import { useState } from 'react'
 import { ResponseError } from '@/types/error'
 
 const formSchema = z.object({
@@ -20,6 +21,8 @@ const formSchema = z.object({
 })
 
 export default function SignUp() {
+
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,6 +38,7 @@ export default function SignUp() {
     try {
       await axios.post('/api/users/sign-up',  values)
       setErrors([])
+      router.push('/')
     } catch (error) {
       if (error instanceof AxiosError) {
         setErrors(error?.response?.data?.errors ?? [])
