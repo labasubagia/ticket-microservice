@@ -4,10 +4,10 @@ import { ResponseError, ResponseErrorItem} from "@/types/error"
 export function handleErrors(error: unknown): ResponseErrorItem[] {
   if (error instanceof AxiosError) {
     const data = error.response?.data as ResponseError
-    return data?.errors ?? []
+    return data?.errors ?? [{ message: error.message }]
   }
-  const data: ResponseError = {
-    errors: [{ message: (error as Error)?.message ?? 'unknown error' }]
+  if (error instanceof Error) {
+    return [{ message: error.message }]
   }
-  return data?.errors
+  return [{ message: 'unknown error' }]
 }
