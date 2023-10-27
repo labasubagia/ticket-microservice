@@ -21,7 +21,7 @@ spec:
               memory: "1024Mi"
           env:
             - name: API_URL
-              value: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api
+              value: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local
 ---
 apiVersion: v1
 kind: Service

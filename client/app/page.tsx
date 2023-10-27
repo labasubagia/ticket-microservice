@@ -3,7 +3,7 @@ import { User } from "@/types/user"
 
 const getCurrentUser = async () => {
   try {
-    const response = await api.get('/users/current-user')
+    const response = await api.get('/api/users/current-user')
     return response.data?.currentUser as User
   } catch {
     return null
