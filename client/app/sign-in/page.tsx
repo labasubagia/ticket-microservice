@@ -7,6 +7,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import axios from 'axios'
+import { useMutation } from 'react-query'
+import { useRouter } from 'next/navigation'
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
+import { handleErrors } from '@/lib/error'
+import { nanoid } from 'nanoid'
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -14,6 +21,8 @@ const formSchema = z.object({
 })
 
 export default function SignIn() {
+
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -23,14 +32,39 @@ export default function SignIn() {
     }
   })
 
+  const signIn = async (values: z.infer<typeof formSchema>) => axios.post('/api/users/sign-in', values)
+
+  const mutation = useMutation(signIn)
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // TODO: Submit here
-    console.log(values)
+    mutation.mutate(values, {
+      onSuccess(data, variables, context) {
+        router.push('/')
+      },
+    })
   }
 
   return (
     <main className={cn('p-4 px-8')}>
       <Form {...form}>
+
+      <h1 className='text-xl'>Sign In</h1>
+
+      {mutation.isError && (
+        <Alert variant={'destructive'} className={cn('mt-4 mb-2')}>
+          <ExclamationTriangleIcon className='h-4 w-4'/>
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            <ul>
+              {handleErrors(mutation.error).map(error => {
+                const message = error.field ? `Validation error on field ${error.field}: ${error.message}` : error.message
+                return <li key={nanoid()}>{message}</li>
+              })}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField 
             control={form.control}
