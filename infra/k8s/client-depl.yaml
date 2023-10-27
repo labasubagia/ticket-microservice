@@ -17,8 +17,11 @@ spec:
           image: dreamcheck/ticket-client
           resources:
             limits:
-              cpu: "1"
-              memory: "512Mi"
+              cpu: "2"
+              memory: "1024Mi"
+          env:
+            - name: API_URL
+              value: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local/api
 ---
 apiVersion: v1
 kind: Service
