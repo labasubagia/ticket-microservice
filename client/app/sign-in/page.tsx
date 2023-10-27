@@ -7,13 +7,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import axios from 'axios'
 import { useMutation } from 'react-query'
 import { useRouter } from 'next/navigation'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import { handleErrors } from '@/lib/error'
 import { nanoid } from 'nanoid'
+import api from '@/lib/fetch'
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -32,8 +32,7 @@ export default function SignIn() {
     }
   })
 
-  const signIn = async (values: z.infer<typeof formSchema>) => axios.post('/api/users/sign-in', values)
-
+  const signIn = async (values: z.infer<typeof formSchema>) => api.post('/api/users/sign-in', values)
   const mutation = useMutation(signIn)
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {

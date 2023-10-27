@@ -1,7 +1,6 @@
 'use client'
 
 import * as z from 'zod'
-import axios, { AxiosError } from 'axios'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -14,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useMutation } from 'react-query'
 import { handleErrors } from '@/lib/error'
+import api from '@/lib/fetch'
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -32,7 +32,7 @@ export default function SignUp() {
     },
   })
 
-  const signUp = async (payload: z.infer<typeof formSchema>) => axios.post('/api/users/sign-up',  payload)
+  const signUp = async (payload: z.infer<typeof formSchema>) => api.post('/api/users/sign-up',  payload)
   const mutation = useMutation(signUp)
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
