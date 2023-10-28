@@ -14,7 +14,7 @@ export default function AuthLayout({
     <>
       {isLoading ? <p>Loading...</p> : (
         <div>
-          <Header currentUser={data ?? undefined} />
+          <Header currentUser={data} />
           {children}
         </div>
       )}
