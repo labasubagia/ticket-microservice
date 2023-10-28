@@ -1,9 +1,18 @@
 {
     "cSpell.words": [
+        "clsx",
         "depl",
         "dreamcheck",
         "hookform",
+        "httponly",
         "skaffold",
         "tailwindcss"
-    ]
+    ],
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "[typescript]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
