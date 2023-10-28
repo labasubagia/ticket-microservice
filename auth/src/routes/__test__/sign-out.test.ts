@@ -1,5 +1,5 @@
+import { app } from '@/app'
 import request from 'supertest'
-import { app } from '../../app'
 
 it('clear cookie after sign out', async () => {
   const expiresCookie = [

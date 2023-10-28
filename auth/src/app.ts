@@ -1,13 +1,13 @@
-import express, { json } from 'express'
 import cookieSession from 'cookie-session'
+import express, { json } from 'express'
 import 'express-async-errors'
 
-import { currentUserRouter } from './routes/current-user'
-import { signInRouter } from './routes/sign-in'
-import { signUpRouter } from './routes/sign-up'
-import { signOutRouter } from './routes/sign-out'
-import { errorHandler } from './middlewares/error-handler'
-import { NotFoundError } from './errors/not-found-error'
+import { NotFoundError } from '@/errors/not-found-error'
+import { errorHandler } from '@/middlewares/error-handler'
+import { currentUserRouter } from '@/routes/current-user'
+import { signInRouter } from '@/routes/sign-in'
+import { signOutRouter } from '@/routes/sign-out'
+import { signUpRouter } from '@/routes/sign-up'
 
 const app = express()
 app.set('trust proxy', true)
