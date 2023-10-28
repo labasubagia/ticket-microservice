@@ -1,5 +1,5 @@
+import { getCookie as getClientCookie } from '@/lib/cookie';
 import axios from 'axios';
-import { getCookie as getClientCookie } from './cookie';
 
 const baseURL = process.env.API_URL;
 const isServer = typeof window === 'undefined';

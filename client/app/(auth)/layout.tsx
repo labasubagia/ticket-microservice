@@ -9,21 +9,15 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoading, data } = useQuery({
+  const { data } = useQuery({
     queryKey: ['currentUser'],
     queryFn: getCurrentUser,
     networkMode: 'offlineFirst',
   });
   return (
     <>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div>
-          <Header currentUser={data ?? undefined} />
-          {children}
-        </div>
-      )}
+      <Header currentUser={data} />
+      <div className="container mx-auto py-8">{children}</div>
     </>
   );
 }

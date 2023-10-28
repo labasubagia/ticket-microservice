@@ -8,7 +8,11 @@ interface Nav {
   isShow: boolean;
 }
 
-export const Header = ({ currentUser }: { currentUser: User | null | undefined }) => {
+export const Header = ({
+  currentUser,
+}: {
+  currentUser: User | null | undefined;
+}) => {
   let navigation: Nav[] = [
     { name: 'Sign Up', path: '/sign-up', isShow: !currentUser },
     { name: 'Sign In', path: '/sign-in', isShow: !currentUser },
@@ -17,17 +21,21 @@ export const Header = ({ currentUser }: { currentUser: User | null | undefined }
   navigation = navigation.filter((nav) => nav.isShow);
 
   return (
-    <header className="flex justify-between p-4">
-      <div className="text-xl">
-        <Link href="/">GetTix</Link>
+    <header className="bg-blue-400 p-4 text-white shadow">
+      <div className="container mx-auto">
+        <div className="flex items-center justify-between">
+          <div className="text-xl">
+            <Link href="/">GetTix</Link>
+          </div>
+          <ul className="flex items-center space-x-4">
+            {navigation.map((nav) => (
+              <li key={nanoid()}>
+                <Link href={nav.path}>{nav.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-      <ul className="flex items-center space-x-4">
-        {navigation.map((nav) => (
-          <li key={nanoid()}>
-            <Link href={nav.path}>{nav.name}</Link>
-          </li>
-        ))}
-      </ul>
     </header>
   );
 };
