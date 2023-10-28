@@ -16,13 +16,15 @@
   },
   "cSpell.words": [
     "clsx",
+    "codepaths",
     "depl",
     "dreamcheck",
     "hookform",
     "httponly",
     "skaffold",
     "tailwindcss",
-    "tanstack"
+    "tanstack",
+    "tsbuildinfo"
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
