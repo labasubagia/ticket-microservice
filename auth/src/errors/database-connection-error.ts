@@ -1,5 +1,4 @@
-import { CustomError, type ItemError } from './custom-error'
-
+import { CustomError, type ItemError } from '@/errors/custom-error'
 export class DatabaseConnectionError extends CustomError {
   statusCode = 500
   reason = 'Error connecting to database'
