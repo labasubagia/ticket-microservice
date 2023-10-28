@@ -6,7 +6,8 @@
         "hookform",
         "httponly",
         "skaffold",
-        "tailwindcss"
+        "tailwindcss",
+        "tanstack"
     ],
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,

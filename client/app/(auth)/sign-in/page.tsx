@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { AlertError } from '@/components/alert-error';
 import { signIn } from '@/actions/auth';
@@ -26,6 +26,7 @@ const formSchema = z.object({
 
 export default function SignIn() {
   const router = useRouter();
+  const queryClient = useQueryClient()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,11 +36,12 @@ export default function SignIn() {
     },
   });
 
-  const mutation = useMutation(signIn);
+  const mutation = useMutation({ mutationFn: signIn });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values, {
       onSuccess(data, variables, context) {
+        queryClient.invalidateQueries({ queryKey: ['currentUser']})
         router.push('/');
       },
     });
