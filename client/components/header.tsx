@@ -8,7 +8,7 @@ interface Nav {
   isShow: boolean;
 }
 
-export const Header = ({ currentUser }: { currentUser?: User }) => {
+export const Header = ({ currentUser }: { currentUser: User | null | undefined }) => {
   let navigation: Nav[] = [
     { name: 'Sign Up', path: '/sign-up', isShow: !currentUser },
     { name: 'Sign In', path: '/sign-in', isShow: !currentUser },

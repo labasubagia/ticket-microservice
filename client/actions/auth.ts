@@ -1,7 +1,7 @@
 import api from '@/lib/fetch';
 import { User } from '@/types/user';
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (): Promise<User | null> => {
   try {
     const response = await api.get('/api/users/current-user');
     return response.data?.currentUser as User;
