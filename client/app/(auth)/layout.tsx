@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { getCurrentUser } from '@/actions/auth';
 import { Header } from '@/components/header';
@@ -9,14 +9,16 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const {isLoading, data} = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ['currentUser'],
     queryFn: getCurrentUser,
     networkMode: 'offlineFirst',
-  })
+  });
   return (
     <>
-      {isLoading ? <p>Loading...</p> : (
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
         <div>
           <Header currentUser={data ?? undefined} />
           {children}

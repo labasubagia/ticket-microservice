@@ -1,26 +1,28 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { signOut } from '@/actions/auth';
+import { AlertError } from '@/components/alert-error';
 import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlertError } from '@/components/alert-error';
-import { signOut } from '@/actions/auth';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function SignOut() {
   const router = useRouter();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: signOut,
     onSuccess(data) {
-      queryClient.invalidateQueries({ queryKey: ['currentUser']})
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
       router.push('/');
     },
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { mutation.mutate() }, [])
+  useEffect(() => {
+    mutation.mutate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className={cn('p-4 px-8')}>

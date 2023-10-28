@@ -1,10 +1,8 @@
 'use client';
 
-import * as z from 'zod';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { cn } from '@/lib/utils';
+import { signUp } from '@/actions/auth';
+import { AlertError } from '@/components/alert-error';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -14,10 +12,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlertError } from '@/components/alert-error';
-import { signUp } from '@/actions/auth';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 export default function SignUp() {
   const router = useRouter();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,20 +37,20 @@ export default function SignUp() {
   });
 
   const mutation = useMutation({
-    mutationFn: signUp
+    mutationFn: signUp,
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values, {
       onSuccess(data, variables, context) {
-        queryClient.invalidateQueries({ queryKey: ['currentUser']})
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
         router.push('/');
       },
     });
   };
 
   return (
-    <main className={cn('p-4 px-8')}>
+    <div className={cn('p-4 px-8')}>
       <Form {...form}>
         <h1 className="text-xl">Sign Up</h1>
 
@@ -88,6 +88,6 @@ export default function SignUp() {
           <Button type="submit">Sign In</Button>
         </form>
       </Form>
-    </main>
+    </div>
   );
 }

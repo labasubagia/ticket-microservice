@@ -1,8 +1,8 @@
 'use client';
 
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from '@/actions/auth';
+import { AlertError } from '@/components/alert-error';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -12,12 +12,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { AlertError } from '@/components/alert-error';
-import { signIn } from '@/actions/auth';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -26,7 +26,7 @@ const formSchema = z.object({
 
 export default function SignIn() {
   const router = useRouter();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,14 +41,14 @@ export default function SignIn() {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values, {
       onSuccess(data, variables, context) {
-        queryClient.invalidateQueries({ queryKey: ['currentUser']})
+        queryClient.invalidateQueries({ queryKey: ['currentUser'] });
         router.push('/');
       },
     });
   };
 
   return (
-    <main className={cn('p-4 px-8')}>
+    <div className={cn('p-4 px-8')}>
       <Form {...form}>
         <h1 className="text-xl">Sign In</h1>
 
@@ -86,6 +86,6 @@ export default function SignIn() {
           <Button type="submit">Login</Button>
         </form>
       </Form>
-    </main>
+    </div>
   );
 }
