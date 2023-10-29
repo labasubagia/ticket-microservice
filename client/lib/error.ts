@@ -1,5 +1,6 @@
-import { ResponseError, ResponseErrorItem } from '@/types/error';
 import { AxiosError } from 'axios';
+
+import { ResponseError, ResponseErrorItem } from '@/types/error';
 
 export function handleErrors(error: unknown): ResponseErrorItem[] {
   if (error instanceof AxiosError) {

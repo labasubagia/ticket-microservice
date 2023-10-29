@@ -1,6 +1,7 @@
-import { User } from '@/types/user';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
+
+import { User } from '@/types/user';
 
 interface Nav {
   name: string;

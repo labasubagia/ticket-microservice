@@ -1,11 +1,12 @@
 'use client';
 
-import { signOut } from '@/actions/auth';
-import { AlertError } from '@/components/alert-error';
-import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { signOut } from '@/actions/auth';
+import { AlertError } from '@/components/alert-error';
+import { cn } from '@/lib/utils';
 
 export default function SignOut() {
   const router = useRouter();

@@ -1,9 +1,10 @@
 'use client';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { handleErrors } from '@/lib/error';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { nanoid } from 'nanoid';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { handleErrors } from '@/lib/error';
 
 interface AlertErrorProps {
   error: unknown;

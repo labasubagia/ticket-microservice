@@ -1,8 +1,9 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
+
 import { getCurrentUser } from '@/actions/auth';
 import { Header } from '@/components/header';
-import { useQuery } from '@tanstack/react-query';
 
 export default function MainLayout({
   children,
