@@ -1,8 +1,10 @@
 import 'express-async-errors'
 
-import { errorHandler, NotFoundError } from '@klstickets/common'
+import { currentUser, errorHandler, NotFoundError } from '@klstickets/common'
 import cookieSession from 'cookie-session'
 import express, { json } from 'express'
+
+import { createTicketRouter } from '@/routes/create'
 
 const app = express()
 app.set('trust proxy', true)
@@ -13,6 +15,9 @@ app.use(
     secure: process.env.NODE_ENV !== 'test'
   })
 )
+app.use(currentUser)
+
+app.use(createTicketRouter)
 
 app.use(async (req, res, next) => {
   throw new NotFoundError()
