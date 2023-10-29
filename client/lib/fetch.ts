@@ -2,7 +2,6 @@ import { getCookie as getClientCookie } from '@/lib/cookie';
 import axios from 'axios';
 
 const baseURL = process.env.API_URL;
-const isServer = typeof window === 'undefined';
 
 const api = axios.create({
   baseURL: baseURL,
@@ -12,6 +11,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
+  const isServer = typeof window === 'undefined';
   if (isServer) {
     const { cookies } = await import('next/headers');
     const store = cookies();
