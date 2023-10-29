@@ -5,6 +5,7 @@ import cookieSession from 'cookie-session'
 import express, { json } from 'express'
 
 import { createTicketRouter } from '@/routes/create'
+import { listTicketRouter } from '@/routes/list'
 import { showTicketRouter } from '@/routes/show'
 
 const app = express()
@@ -20,6 +21,7 @@ app.use(currentUser)
 
 app.use(createTicketRouter)
 app.use(showTicketRouter)
+app.use(listTicketRouter)
 
 app.use(async (req, res, next) => {
   throw new NotFoundError()
