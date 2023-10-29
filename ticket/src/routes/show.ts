@@ -1,4 +1,4 @@
-import { requireAuth, validateRequest } from '@klstickets/common'
+import { NotFoundError, validateRequest } from '@klstickets/common'
 import express, { type Request, type Response } from 'express'
 import { param } from 'express-validator'
 
@@ -8,12 +8,14 @@ const router = express.Router()
 
 router.get(
   '/api/tickets/:id',
-  requireAuth,
   [param('id').trim().notEmpty().withMessage('Id is invalid')],
   validateRequest,
   async (req: Request, res: Response) => {
     const { id } = req.params
     const ticket = await Ticket.findOne({ _id: id })
+    if (ticket == null) {
+      throw new NotFoundError()
+    }
     return res.status(200).send(ticket)
   }
 )

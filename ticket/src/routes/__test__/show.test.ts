@@ -1,11 +1,12 @@
+import { mongo } from 'mongoose'
 import request from 'supertest'
 
 import { app } from '@/app'
 import { type TicketDoc } from '@/models/ticket'
 
-it('should be a routes to handle GET /api/tickets/:id', async () => {
-  const response = await request(app).get('/api/tickets/INVALID_ID').send()
-  expect(response.status).not.toEqual(404)
+it('should be not found', async () => {
+  const id = new mongo.ObjectId().toString()
+  await request(app).get(`/api/tickets/${id}`).send().expect(404)
 })
 
 it('should be able to get ticket', async () => {
