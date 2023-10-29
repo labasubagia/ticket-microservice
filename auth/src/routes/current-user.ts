@@ -1,6 +1,7 @@
+import express, { type Request, type Response } from 'express'
+
 import { currentUser } from '@/middlewares/current-user'
 import { requireAuth } from '@/middlewares/require-auth'
-import express, { type Request, type Response } from 'express'
 
 const router = express.Router()
 

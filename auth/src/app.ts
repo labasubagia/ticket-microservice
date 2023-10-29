@@ -1,6 +1,7 @@
+import 'express-async-errors'
+
 import cookieSession from 'cookie-session'
 import express, { json } from 'express'
-import 'express-async-errors'
 
 import { NotFoundError } from '@/errors/not-found-error'
 import { errorHandler } from '@/middlewares/error-handler'

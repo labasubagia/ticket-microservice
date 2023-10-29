@@ -1,5 +1,6 @@
-import { toHash } from '@/services/password'
 import mongoose from 'mongoose'
+
+import { toHash } from '@/services/password'
 
 interface UserAttrs {
   email: string

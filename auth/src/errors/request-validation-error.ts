@@ -1,8 +1,9 @@
-import { CustomError, type ItemError } from '@/errors/custom-error'
 import {
   type FieldValidationError,
   type ValidationError
 } from 'express-validator'
+
+import { CustomError, type ItemError } from '@/errors/custom-error'
 
 export class RequestValidationError extends CustomError {
   statusCode = 400

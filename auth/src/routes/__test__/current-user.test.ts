@@ -1,5 +1,6 @@
-import { app } from '@/app'
 import request from 'supertest'
+
+import { app } from '@/app'
 
 it('respond with detail of current user', async () => {
   const cookie = await globalThis.signUp()

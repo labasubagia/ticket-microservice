@@ -1,5 +1,6 @@
-import { app } from '@/app'
 import mongoose from 'mongoose'
+
+import { app } from '@/app'
 
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''

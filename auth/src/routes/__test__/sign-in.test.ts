@@ -1,5 +1,6 @@
-import { app } from '@/app'
 import request from 'supertest'
+
+import { app } from '@/app'
 
 it('fails when email does not exists', async () => {
   await request(app)
