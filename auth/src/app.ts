@@ -1,10 +1,9 @@
 import 'express-async-errors'
 
+import { errorHandler, NotFoundError } from '@klstickets/common'
 import cookieSession from 'cookie-session'
 import express, { json } from 'express'
 
-import { NotFoundError } from '@/errors/not-found-error'
-import { errorHandler } from '@/middlewares/error-handler'
 import { currentUserRouter } from '@/routes/current-user'
 import { signInRouter } from '@/routes/sign-in'
 import { signOutRouter } from '@/routes/sign-out'

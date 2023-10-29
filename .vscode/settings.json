@@ -21,10 +21,12 @@
     "dreamcheck",
     "hookform",
     "httponly",
+    "klstickets",
     "skaffold",
     "tailwindcss",
     "tanstack",
-    "tsbuildinfo"
+    "tsbuildinfo",
+    "tscpaths"
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll": true,

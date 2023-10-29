@@ -1,9 +1,8 @@
+import { BadRequestError, validateRequest } from '@klstickets/common'
 import express, { type Request, type Response } from 'express'
 import { body } from 'express-validator'
 import jwt from 'jsonwebtoken'
 
-import { BadRequestError } from '@/errors/bad-request-error'
-import { validateRequest } from '@/middlewares/validate-request'
 import { User } from '@/models/user'
 
 const router = express.Router()
