@@ -1,14 +1,9 @@
+import jwt from 'jsonwebtoken'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
-import request from 'supertest'
-
-import { app } from '@/app'
 
 declare global {
-  function signUp(params?: {
-    email?: string
-    password?: string
-  }): Promise<string>
+  function fakeSignIn(): string
 }
 
 let mongo: MongoMemoryServer
@@ -33,14 +28,12 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-globalThis.signUp = async ({
-  email = 'test@test.com',
-  password = '12345'
-} = {}) => {
-  const response = await request(app)
-    .post('/api/users/sign-up')
-    .send({ email, password })
-    .expect(201)
-  const cookie = response.get('Set-Cookie')
-  return cookie[0]
+globalThis.fakeSignIn = () => {
+  const id = new mongoose.mongo.ObjectId()
+  const payload = { id, email: 'test@test.com' }
+  const token = jwt.sign(payload, process.env.JWT_KEY ?? '')
+  const session = { jwt: token }
+  const sessionJSON = JSON.stringify(session)
+  const base64 = Buffer.from(sessionJSON).toString('base64')
+  return `session=${base64}; path=/; httponly`
 }
