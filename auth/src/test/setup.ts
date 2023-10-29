@@ -22,9 +22,9 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   const collections = await mongoose.connection.db.collections()
-  for (const collection of collections) {
-    await collection.deleteMany({})
-  }
+  await Promise.all([
+    collections.map(async (collection) => await collection.deleteMany({}))
+  ])
 })
 
 afterAll(async () => {
