@@ -53,7 +53,7 @@ export default function SignUp() {
   return (
     <div className={cn('p-4 px-8')}>
       <Form {...form}>
-        <h1 className="text-xl">Sign Up</h1>
+        <h1 className="pb-4 text-xl">Sign Up</h1>
 
         {mutation.isError && <AlertError error={mutation.error} />}
 
