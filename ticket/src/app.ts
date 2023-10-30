@@ -7,6 +7,7 @@ import express, { json } from 'express'
 import { createTicketRouter } from '@/routes/create'
 import { listTicketRouter } from '@/routes/list'
 import { showTicketRouter } from '@/routes/show'
+import { updateTicketRouter } from '@/routes/update'
 
 const app = express()
 app.set('trust proxy', true)
@@ -20,6 +21,7 @@ app.use(
 app.use(currentUser)
 
 app.use(createTicketRouter)
+app.use(updateTicketRouter)
 app.use(showTicketRouter)
 app.use(listTicketRouter)
 
