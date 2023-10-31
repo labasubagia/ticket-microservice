@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  nats:
+    image: nats:alpine
+    ports:
+      - 4222:4222
+      - 8222:8222
+    command: ["-p", "4222", "-m", "8222", "-js"]
