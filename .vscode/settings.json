@@ -21,6 +21,7 @@
     "dreamcheck",
     "hookform",
     "httponly",
+    "jetstream",
     "klstickets",
     "nats",
     "skaffold",
