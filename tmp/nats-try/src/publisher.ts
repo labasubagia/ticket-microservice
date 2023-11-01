@@ -1,7 +1,8 @@
 import { randomBytes } from "crypto";
+import { StringCodec, connect } from "nats";
 import { NatsBroker } from "./nats";
 
-const run = async () => {
+const runNats = async () => {
   const broker = new NatsBroker("http://0.0.0.0:4222");
   await broker.connect();
 
@@ -13,4 +14,26 @@ const run = async () => {
   console.log("published", payload);
 };
 
-run();
+const runStream = async () => {
+  const sc = StringCodec();
+
+  const nc = await connect({ servers: "http://0.0.0.0:4222" });
+  const jsm = await nc.jetstreamManager();
+
+  const stream = "ticket";
+  const subject = "ticket:*";
+  await jsm.streams.add({ name: stream, subjects: [subject] });
+
+  nc.publish(
+    "ticket:created",
+    sc.encode(JSON.stringify({ message: "Ticket Created" }))
+  );
+  nc.publish(
+    "ticket:updated",
+    sc.encode(JSON.stringify({ message: "Ticket Updated" }))
+  );
+  console.log("published");
+  await nc.drain();
+};
+
+runStream();

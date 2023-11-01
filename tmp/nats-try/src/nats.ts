@@ -1,17 +1,13 @@
-import { NatsConnection, StringCodec, connect } from "nats";
+import {
+  NatsConnection,
+  StringCodec,
+  SubscriptionOptions,
+  connect,
+} from "nats";
 
-abstract class MessageBroker {
-  abstract connect: () => Promise<void>;
-  abstract publish: (subject: string, payload: object) => void;
-  abstract subscribe: (
-    subject: string,
-    cb: (msg: unknown) => void
-  ) => Promise<void>;
-}
-
-class NatsBroker implements MessageBroker {
+class NatsBroker {
   private url: string;
-  private connection: NatsConnection | null = null;
+  private nc: NatsConnection | null = null;
   stringCodec = StringCodec();
 
   constructor(url: string) {
@@ -19,18 +15,22 @@ class NatsBroker implements MessageBroker {
   }
 
   async connect() {
-    this.connection = await connect({ servers: this.url });
+    this.nc = await connect({ servers: this.url });
   }
 
   publish(subject: string, payload: object) {
-    if (!this.connection) return;
+    if (!this.nc) return;
     const enc = this.stringCodec.encode(JSON.stringify(payload));
-    this.connection.publish(subject, enc);
+    this.nc.publish(subject, enc);
   }
 
-  async subscribe(subject: string, callback: (msg: string) => void) {
-    if (!this.connection) return;
-    const subscription = this.connection.subscribe(subject);
+  async subscribe(
+    subject: string,
+    callback: (msg: string) => void,
+    opts?: SubscriptionOptions
+  ) {
+    if (!this.nc) return;
+    const subscription = this.nc.subscribe(subject, opts);
     for await (const message of subscription) {
       callback(this.stringCodec.decode(message.data));
     }
