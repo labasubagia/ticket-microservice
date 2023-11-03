@@ -16,24 +16,22 @@ const runNats = async () => {
 
 const runStream = async () => {
   const sc = StringCodec();
-
   const nc = await connect({ servers: "http://0.0.0.0:4222" });
+
   const jsm = await nc.jetstreamManager();
+  await jsm.streams.add({
+    name: "TICKETS",
+    subjects: ["ticket.*"],
+  });
 
-  const stream = "ticket";
-  const subject = "ticket:*";
-  await jsm.streams.add({ name: stream, subjects: [subject] });
-
-  nc.publish(
-    "ticket:created",
-    sc.encode(JSON.stringify({ message: "Ticket Created" }))
-  );
-  nc.publish(
-    "ticket:updated",
-    sc.encode(JSON.stringify({ message: "Ticket Updated" }))
-  );
-  console.log("published");
-  await nc.drain();
+  const js = nc.jetstream();
+  const proms = Array.from({ length: 10 }).map((_v, idx) => {
+    return js.publish(
+      "ticket.created",
+      sc.encode(JSON.stringify({ message: `hello world ${idx}` }))
+    );
+  });
+  await Promise.all(proms);
 };
 
 runStream();

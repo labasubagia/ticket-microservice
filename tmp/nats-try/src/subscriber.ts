@@ -69,40 +69,32 @@ const runLegacyPullSubscribe = async () => {
   clearInterval(timer);
 };
 
-const run = async () => {
+const runConsumeStream = async () => {
   const sc = StringCodec();
   const nc = await connect({ servers: URL });
   const jsm = await nc.jetstreamManager();
-
-  const stream = "ticket";
-  const subject = "ticket:created";
-
-  const consumers = await jsm.consumers.list(stream).next();
-  if (!consumers.find((c) => c.name == subject)) {
-    try {
-      await jsm.consumers.add(stream, {
-        name: subject,
-        ack_policy: AckPolicy.Explicit,
-      });
-    } catch (error) {
-      console.log((error as Error).message);
-    }
-  }
-
   const js = nc.jetstream();
-  const consumer = await js.consumers.get(stream, subject);
-  const messages = await consumer.consume({ max_messages: 5000 });
 
-  console.log("consume started...");
+  await jsm.consumers.add("TICKETS", {
+    durable_name: "my-ephemeral",
+    ack_policy: AckPolicy.Explicit,
+  });
+
+  const consumer = await js.consumers.get("TICKETS", "my-ephemeral");
+
+  console.log("waiting for messages...");
+  const messages = await consumer.consume();
   for await (const m of messages) {
-    console.log(`[${m.seq}] received ${m.subject}: ${sc.decode(m.data)}`);
+    console.log(
+      `[${m.seq}] legacy push subscriber received ${m.subject}: ${sc.decode(
+        m.data
+      )}`
+    );
     m.ack();
   }
-  nc.drain();
-  console.log("consume finished...");
 };
 
 console.clear();
 // runLegacyPushSubscribe();
 // runLegacyPullSubscribe();
-run();
+runConsumeStream();
