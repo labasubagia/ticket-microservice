@@ -32,6 +32,7 @@ const runStream = async () => {
     );
   });
   await Promise.all(proms);
+  await nc.drain();
 };
 
 runStream();
