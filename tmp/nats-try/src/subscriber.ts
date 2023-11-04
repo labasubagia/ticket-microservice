@@ -1,4 +1,10 @@
-import { AckPolicy, StringCodec, connect, consumerOpts } from "nats";
+import {
+  AckPolicy,
+  DeliverPolicy,
+  StringCodec,
+  connect,
+  consumerOpts,
+} from "nats";
 import { NatsBroker } from "./nats";
 
 const URL = "http://0.0.0.0:4222";
@@ -78,6 +84,7 @@ const runConsumeStream = async () => {
   await jsm.consumers.add("TICKETS", {
     durable_name: "my-ephemeral",
     ack_policy: AckPolicy.Explicit,
+    deliver_policy: DeliverPolicy.All,
   });
 
   const consumer = await js.consumers.get("TICKETS", "my-ephemeral");
