@@ -1,8 +1,6 @@
+import { randomBytes } from "crypto";
 import { connect } from "nats";
-import {
-  TicketCreatedPublisher,
-  TicketUpdatedPublisher,
-} from "./jetstream/ticket";
+import { TicketCreatedPublisher } from "./jetstream/ticket-created-event";
 
 const URL = "http://0.0.0.0:4222";
 
@@ -15,12 +13,18 @@ const run = async () => {
       id: String(idx + 1),
       title: `ticket ${idx + 1}`,
       price: 200,
+      userId: randomBytes(5).toString("hex"),
     });
   });
   await Promise.all(proms);
 
-  const publisher2 = await new TicketUpdatedPublisher(nc).init();
-  await publisher2.publish({ id: "1", title: "hello", price: 100 });
+  const publisher2 = await new TicketCreatedPublisher(nc).init();
+  await publisher2.publish({
+    id: "1",
+    title: "hello",
+    price: 100,
+    userId: randomBytes(5).toString("hex"),
+  });
 
   await nc.drain();
 };

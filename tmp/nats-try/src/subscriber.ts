@@ -1,8 +1,6 @@
 import { connect } from "nats";
-import {
-  TicketCreatedConsumer,
-  TicketUpdatedConsumer,
-} from "./jetstream/ticket";
+import { TicketCreatedConsumer } from "./jetstream/ticket-created-event";
+import { TicketUpdatedConsumer } from "./jetstream/ticket-updated-event";
 
 const URL = "http://0.0.0.0:4222";
 

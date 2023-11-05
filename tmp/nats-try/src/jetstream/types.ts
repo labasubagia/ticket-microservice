@@ -1,3 +1,9 @@
+export interface Event {
+  topic: Topic;
+  subject: Subject;
+  data: object;
+}
+
 export enum Topic {
   Ticket = "ticket",
 }
