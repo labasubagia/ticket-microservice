@@ -1,38 +1,28 @@
-import { randomBytes } from "crypto";
-import { StringCodec, connect } from "nats";
-import { NatsBroker } from "./nats";
+import { connect } from "nats";
+import {
+  TicketCreatedPublisher,
+  TicketUpdatedPublisher,
+} from "./jetstream/ticket";
 
-const runNats = async () => {
-  const broker = new NatsBroker("http://0.0.0.0:4222");
-  await broker.connect();
+const URL = "http://0.0.0.0:4222";
 
-  const payload = {
-    id: randomBytes(5).toString("hex"),
-    message: "hello world",
-  };
-  broker.publish("ticket:created", payload);
-  console.log("published", payload);
-};
+const run = async () => {
+  const nc = await connect({ servers: URL });
 
-const runStream = async () => {
-  const sc = StringCodec();
-  const nc = await connect({ servers: "http://0.0.0.0:4222" });
-
-  const jsm = await nc.jetstreamManager();
-  await jsm.streams.add({
-    name: "TICKETS",
-    subjects: ["ticket.*"],
-  });
-
-  const js = nc.jetstream();
+  const publisher1 = await new TicketCreatedPublisher(nc).init();
   const proms = Array.from({ length: 10 }).map((_v, idx) => {
-    return js.publish(
-      "ticket.created",
-      sc.encode(JSON.stringify({ message: `hello world ${idx}` }))
-    );
+    return publisher1.publish({
+      id: String(idx + 1),
+      title: `ticket ${idx + 1}`,
+      price: 200,
+    });
   });
   await Promise.all(proms);
+
+  const publisher2 = await new TicketUpdatedPublisher(nc).init();
+  await publisher2.publish({ id: "1", title: "hello", price: 100 });
+
   await nc.drain();
 };
 
-runStream();
+run();
