@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import { app } from '@/app'
+import { natsWrapper } from '@/nats-wrapper'
 
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
@@ -14,8 +15,20 @@ const start = async (): Promise<void> => {
   }
 
   try {
+    // mongo
     await mongoose.connect(mongoUri)
     console.log('connected to mongodb')
+
+    // nats
+    await natsWrapper.connect('http://nats-srv:4222')
+
+    natsWrapper.client.closed().catch((error) => {
+      console.log('NATS closed', error.message)
+      process.exit()
+    })
+
+    process.on('SIGINT', () => natsWrapper.client.close())
+    process.on('SIGTERM', () => natsWrapper.client.close())
   } catch (error) {
     console.error(error)
   }
