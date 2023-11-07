@@ -14,13 +14,18 @@ const start = async (): Promise<void> => {
     throw new Error('MONGO_URI must be defined')
   }
 
+  const natsServers = (process.env.NATS_SERVERS ?? '').split(',')
+  if (natsServers.length == 0) {
+    throw new Error('NATS_SERVERS must be defined')
+  }
+
   try {
     // mongo
     await mongoose.connect(mongoUri)
     console.log('connected to mongodb')
 
     // nats
-    await natsWrapper.connect('http://nats-srv:4222')
+    await natsWrapper.connect(natsServers)
 
     natsWrapper.client.closed().catch((error) => {
       console.log('NATS closed', error.message)

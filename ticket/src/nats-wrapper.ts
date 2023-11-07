@@ -1,4 +1,4 @@
-import { NatsConnection, connect } from 'nats'
+import { ConnectionOptions, NatsConnection, connect } from 'nats'
 
 class NatsWrapper {
   private _client?: NatsConnection
@@ -10,7 +10,7 @@ class NatsWrapper {
     return this._client
   }
 
-  async connect(servers: string) {
+  async connect(servers: ConnectionOptions['servers']) {
     this._client = await connect({ servers: servers })
   }
 }
