@@ -25,6 +25,14 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: dreamcheck/order
+      context: order
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     - image: dreamcheck/ticket-client
       context: client
       docker:
