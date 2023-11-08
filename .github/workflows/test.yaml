@@ -63,3 +63,32 @@ jobs:
 
       - name: test
         run: pnpm run test
+
+  test-order-service:
+    name: Test Order Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./order
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: install node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: ticket/pnpm-lock.yaml
+
+      - name: install deps
+        run: pnpm install
+
+      - name: test
+        run: pnpm run test
+
