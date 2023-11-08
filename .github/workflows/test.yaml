@@ -84,7 +84,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-          cache-dependency-path: ticket/pnpm-lock.yaml
+          cache-dependency-path: order/pnpm-lock.yaml
 
       - name: install deps
         run: pnpm install
