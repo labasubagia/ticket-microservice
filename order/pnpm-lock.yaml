@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@klstickets/common':
-    specifier: ^1.0.9
-    version: 1.0.9
+    specifier: ^1.0.10
+    version: 1.0.10
   '@types/cookie-session':
     specifier: ^2.0.46
     version: 2.0.46
@@ -768,8 +768,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: false
 
-  /@klstickets/common@1.0.9:
-    resolution: {integrity: sha512-eIdRR30Hj2iipBcvr/8omxe1gYS+M4khW6vynVpKnutMUfOfx//IWM53dYaaHE0a7Af1B/Mc1J7hOrJoCjZz/g==}
+  /@klstickets/common@1.0.10:
+    resolution: {integrity: sha512-IpYCsQjw66xotbUPZcskL8qOeBGPsRvqiMFDdHvmWzocHnQMIdBCLAt9Rqd8o+RJaVv7aXLrd/wRYNLKfltEqg==}
     dependencies:
       nats: 2.18.0
     dev: false
