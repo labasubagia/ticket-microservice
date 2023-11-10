@@ -1,7 +1,9 @@
 import { NotFoundError, requireAuth } from '@klstickets/common'
 import express, { type Request, type Response } from 'express'
 
+import { OrderCancelledPublisher } from '@/events/publishers/order-cancelled-publisher'
 import { Order, OrderStatus } from '@/models/order'
+import { natsWrapper } from '@/nats-wrapper'
 
 const router = express.Router()
 
@@ -18,6 +20,16 @@ router.delete(
     }
     order.status = OrderStatus.Cancelled
     await order.save()
+
+    // publish event
+    const publisher = await new OrderCancelledPublisher(
+      natsWrapper.client
+    ).init()
+    await publisher.publish({
+      id: order.id,
+      ticket: { id: order?.ticket?.id }
+    })
+
     return res.status(204).send()
   }
 )
