@@ -11,26 +11,27 @@ export abstract class Publisher<T extends Event> {
   async init() {
     const jsm = await this.client.jetstreamManager();
 
-    const stream = await jsm.streams.get(this.topic).catch(async (error) => {
-      const isNotFound =
-        (error as NatsError)?.code === ErrorCode.JetStream404NoMessages;
-      if (isNotFound) {
-        await jsm.streams.add({
-          name: this.topic,
-          subjects: [this.subject],
-        });
-      } else {
+    // upsert stream
+    await jsm.streams
+      .get(this.topic)
+      .then(async (stream) => {
+        const { config } = await stream.info();
+        const hasSubject = config.subjects.includes(this.subject);
+        if (hasSubject) {
+          return;
+        }
+        config.subjects?.push(this.subject);
+        await jsm.streams.update(this.topic, config);
+      })
+      .catch(async (error) => {
+        const isNotFound =
+          (error as NatsError)?.code === ErrorCode.JetStream404NoMessages;
+        if (isNotFound) {
+          await jsm.streams.add({ name: this.topic, subjects: [this.subject] });
+          return;
+        }
         console.error(error);
-      }
-    });
-
-    if (stream) {
-      const streamInfo = await stream.info();
-      if (!streamInfo.config.subjects.includes(this.subject)) {
-        streamInfo.config.subjects?.push(this.subject);
-        await jsm.streams.update(this.topic, streamInfo.config);
-      }
-    }
+      });
 
     return this;
   }
