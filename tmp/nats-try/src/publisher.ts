@@ -1,30 +1,37 @@
 import { randomBytes } from "crypto";
 import { connect } from "nats";
 import { TicketCreatedPublisher } from "./jetstream/ticket-created-event";
+import { TicketUpdatedPublisher } from "./jetstream/ticket-updated-event";
 
 const URL = "http://0.0.0.0:4222";
 
 const run = async () => {
   const nc = await connect({ servers: URL });
+  let count = 0;
 
   const publisher1 = await new TicketCreatedPublisher(nc).init();
-  const proms = Array.from({ length: 10 }).map((_v, idx) => {
+  const proms = Array.from({ length: 5 }).map((_v, idx) => {
+    count++;
     return publisher1.publish({
-      id: String(idx + 1),
-      title: `ticket ${idx + 1}`,
+      id: String(count),
+      title: `created ${count}`,
       price: 200,
       userId: randomBytes(5).toString("hex"),
     });
   });
   await Promise.all(proms);
 
-  const publisher2 = await new TicketCreatedPublisher(nc).init();
-  await publisher2.publish({
-    id: "1",
-    title: "hello",
-    price: 100,
-    userId: randomBytes(5).toString("hex"),
+  const publisher2 = await new TicketUpdatedPublisher(nc).init();
+  const proms2 = Array.from({ length: 5 }).map((_v, idx) => {
+    count++;
+    return publisher2.publish({
+      id: String(count),
+      title: `updated ${count}`,
+      price: 50,
+      userId: randomBytes(5).toString("hex"),
+    });
   });
+  await Promise.all(proms2);
 
   await nc.drain();
 };
