@@ -15,7 +15,7 @@ const start = async (): Promise<void> => {
   }
 
   const natsServers = (process.env.NATS_SERVERS ?? '').split(',')
-  if (natsServers.length == 0) {
+  if (natsServers.length === 0) {
     throw new Error('NATS_SERVERS must be defined')
   }
 
@@ -32,8 +32,12 @@ const start = async (): Promise<void> => {
       process.exit()
     })
 
-    process.on('SIGINT', () => natsWrapper.client.close())
-    process.on('SIGTERM', () => natsWrapper.client.close())
+    process.on('SIGINT', async () => {
+      await natsWrapper.client.close()
+    })
+    process.on('SIGTERM', async () => {
+      await natsWrapper.client.close()
+    })
   } catch (error) {
     console.error(error)
   }
