@@ -8,8 +8,10 @@ import express, { type Request, type Response } from 'express'
 import { body } from 'express-validator'
 import mongoose from 'mongoose'
 
+import { OrderCreatedPublisher } from '@/events/publishers/order-created-publisher'
 import { Order } from '@/models/order'
 import { Ticket } from '@/models/ticket'
+import { natsWrapper } from '@/nats-wrapper'
 
 const router = express.Router()
 
@@ -47,6 +49,19 @@ router.post(
       ticket
     })
     await order.save()
+
+    // publish event
+    const publisher = await new OrderCreatedPublisher(natsWrapper.client).init()
+    await publisher.publish({
+      id: order.id,
+      status: order.status,
+      userId: order.userId,
+      expiresAt: order.expiresAt.toISOString(),
+      ticket: {
+        id: ticket.id,
+        price: ticket.price
+      }
+    })
 
     return res.status(201).send(order)
   }
