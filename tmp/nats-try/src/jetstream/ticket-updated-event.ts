@@ -1,4 +1,3 @@
-import { JsMsg } from "nats";
 import { Consumer } from "./base-consumer";
 import { Publisher } from "./base-publisher";
 import { Subject, Topic } from "./types";
@@ -21,10 +20,10 @@ export class TicketUpdatedPublisher extends Publisher<TicketUpdatedEvent> {
 export class TicketUpdatedConsumer extends Consumer<TicketUpdatedEvent> {
   topic: Topic.Ticket = Topic.Ticket;
   subject: Subject.TicketUpdated = Subject.TicketUpdated;
-  queueGroupName: string = "payment-service-ticket-updated";
+  queueGroupName: string = "payment-service";
   failRetryWaitMs: number = 500;
 
-  async onMessage(m: JsMsg, data: TicketUpdatedEvent["data"]): Promise<void> {
-    console.log(`[${m.seq}] received updated`, data);
+  async onMessage(data: TicketUpdatedEvent["data"]): Promise<void> {
+    console.log(`received updated`, data);
   }
 }
