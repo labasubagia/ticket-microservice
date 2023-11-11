@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   nats:
@@ -6,4 +6,4 @@ services:
     ports:
       - 4222:4222
       - 8222:8222
-    command: ["-p", "4222", "-m", "8222", "-js"]
+    command: ['-p', '4222', '-m', '8222', '-js']

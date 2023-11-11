@@ -1,18 +1,19 @@
-import { connect } from "nats";
-import { TicketCreatedConsumer } from "./jetstream/ticket-created-event";
-import { TicketUpdatedConsumer } from "./jetstream/ticket-updated-event";
+import { connect } from 'nats'
 
-const URL = "http://0.0.0.0:4222";
+import { TicketCreatedConsumer } from './jetstream/ticket-created-event'
+import { TicketUpdatedConsumer } from './jetstream/ticket-updated-event'
 
-const run = async () => {
-  console.clear();
-  const client = await connect({ servers: URL });
+const URL = 'http://0.0.0.0:4222'
 
-  const c1 = await new TicketCreatedConsumer().init(client);
-  const c2 = await new TicketUpdatedConsumer().init(client);
+const run = async (): Promise<void> => {
+  console.clear()
+  const client = await connect({ servers: URL })
 
-  console.log("waiting for messages...");
-  await Promise.all([c1.consume(), c2.consume()]);
-};
+  const c1 = await new TicketCreatedConsumer().init(client)
+  const c2 = await new TicketUpdatedConsumer().init(client)
 
-run();
+  console.log('waiting for messages...')
+  await Promise.all([c1.consume(), c2.consume()])
+}
+
+void run()

@@ -1,15 +1,15 @@
 export interface Event {
-  topic: Topic;
-  subject: Subject;
-  data: object;
+  topic: Topic
+  subject: Subject
+  data: object
 }
 
 export enum Topic {
-  Ticket = "ticket",
+  Ticket = 'ticket'
 }
 
 export enum Subject {
-  TicketCreated = "ticket.created",
-  TicketUpdated = "ticket.updated",
-  OrderUpdated = "order.updated",
+  TicketCreated = 'ticket.created',
+  TicketUpdated = 'ticket.updated',
+  OrderUpdated = 'order.updated'
 }
