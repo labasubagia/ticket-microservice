@@ -12,7 +12,6 @@ jest.mock('@/events/publishers/ticket-created-publisher')
 jest.mock('@/events/publishers/ticket-updated-publisher')
 
 beforeAll(async () => {
-  jest.clearAllMocks()
   process.env.JWT_KEY = 'asdf'
 
   mongo = await MongoMemoryServer.create()
@@ -21,6 +20,7 @@ beforeAll(async () => {
 })
 
 beforeEach(async () => {
+  jest.clearAllMocks()
   const collections = await mongoose.connection.db.collections()
   await Promise.all([
     collections.map(async (collection) => await collection.deleteMany({}))
