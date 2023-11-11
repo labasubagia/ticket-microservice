@@ -3,6 +3,9 @@ import mongoose from 'mongoose'
 import { app } from '@/app'
 import { natsWrapper } from '@/nats-wrapper'
 
+import { TicketCreatedConsumer } from './events/consumers/ticket-created-consumer'
+import { TicketUpdatedConsumer } from './events/consumers/ticket-updated-consumer'
+
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
   if (jwtKey === '') {
@@ -38,6 +41,10 @@ const start = async (): Promise<void> => {
     process.on('SIGTERM', async () => {
       await natsWrapper.client.close()
     })
+
+    // consumers
+    void (await new TicketCreatedConsumer(natsWrapper.client).init()).consume()
+    void (await new TicketUpdatedConsumer(natsWrapper.client).init()).consume()
   } catch (error) {
     console.error(error)
   }
@@ -46,5 +53,4 @@ const start = async (): Promise<void> => {
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-start()
+void start()
