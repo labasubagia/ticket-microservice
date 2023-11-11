@@ -1,7 +1,7 @@
 import {
   Publisher,
   Subject,
-  TicketUpdatedEvent,
+  type TicketUpdatedEvent,
   Topic
 } from '@klstickets/common'
 
