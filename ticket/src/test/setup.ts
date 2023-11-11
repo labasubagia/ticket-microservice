@@ -8,7 +8,8 @@ declare global {
 
 let mongo: MongoMemoryServer
 
-jest.mock('@/nats-wrapper')
+jest.mock('@/events/publishers/ticket-created-publisher')
+jest.mock('@/events/publishers/ticket-updated-publisher')
 
 beforeAll(async () => {
   jest.clearAllMocks()

@@ -5,7 +5,9 @@ import {
   Topic
 } from '@klstickets/common'
 
-export class TicketUpdatedPublisher extends Publisher<TicketUpdatedEvent> {
+class TicketUpdatedPublisher extends Publisher<TicketUpdatedEvent> {
   topic: Topic = Topic.Ticket
   subject: Subject.TicketUpdated = Subject.TicketUpdated
 }
+
+export const ticketUpdatedPublisher = new TicketUpdatedPublisher()

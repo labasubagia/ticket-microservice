@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 
 import { app } from '@/app'
+import { ticketCreatedPublisher } from '@/events/publishers/ticket-created-publisher'
+import { ticketUpdatedPublisher } from '@/events/publishers/ticket-updated-publisher'
 import { natsWrapper } from '@/nats-wrapper'
 
 const start = async (): Promise<void> => {
@@ -34,6 +36,10 @@ const start = async (): Promise<void> => {
 
     process.on('SIGINT', () => natsWrapper.client.close())
     process.on('SIGTERM', () => natsWrapper.client.close())
+
+    // publishers
+    void ticketCreatedPublisher.init(natsWrapper.client)
+    void ticketUpdatedPublisher.init(natsWrapper.client)
   } catch (error) {
     console.error(error)
   }

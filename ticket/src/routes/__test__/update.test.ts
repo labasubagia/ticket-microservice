@@ -2,6 +2,7 @@ import { mongo } from 'mongoose'
 import request from 'supertest'
 
 import { app } from '@/app'
+import { ticketUpdatedPublisher } from '@/events/publishers/ticket-updated-publisher'
 import { type TicketDoc } from '@/models/ticket'
 
 it('should not be able to access when not signed in', async () => {
@@ -61,4 +62,23 @@ it(`should be able to update ticket`, async () => {
   expect(ticket.id).toEqual(id)
   expect(ticket.title).toEqual(payload.title)
   expect(ticket.price).toEqual(payload.price)
+})
+
+it(`emits event after update`, async () => {
+  const cookie = global.fakeSignIn()
+  const createResponse = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({ title: 'ticket', price: 10 })
+    .expect(201)
+  const id = createResponse.body?.id
+
+  const payload = { title: 'updated', price: 20 }
+  await request(app)
+    .put(`/api/tickets/${id}`)
+    .set('Cookie', cookie)
+    .send(payload)
+    .expect(200)
+
+  expect(ticketUpdatedPublisher.publish).toHaveBeenCalled()
 })

@@ -1,6 +1,7 @@
 import request from 'supertest'
 
 import { app } from '@/app'
+import { ticketCreatedPublisher } from '@/events/publishers/ticket-created-publisher'
 import { Ticket } from '@/models/ticket'
 
 it('has a route handler listening to POST /api/tickets', async () => {
@@ -58,4 +59,14 @@ it('creates a ticket with valid inputs', async () => {
   expect(tickets).toHaveLength(1)
   expect(tickets[0].title).toEqual(payload.title)
   expect(tickets[0].price).toEqual(payload.price)
+})
+
+it('emits event after created', async () => {
+  const payload = { title: 'football match', price: 200 }
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.fakeSignIn())
+    .send(payload)
+    .expect(201)
+  expect(ticketCreatedPublisher.publish).toHaveBeenCalled()
 })

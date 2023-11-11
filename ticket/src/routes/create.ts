@@ -2,9 +2,8 @@ import { requireAuth, validateRequest } from '@klstickets/common'
 import express, { type Request, type Response } from 'express'
 import { body } from 'express-validator'
 
-import { TicketCreatedPublisher } from '@/events/publishers/ticket-created-publisher'
+import { ticketCreatedPublisher } from '@/events/publishers/ticket-created-publisher'
 import { Ticket } from '@/models/ticket'
-import { natsWrapper } from '@/nats-wrapper'
 
 const router = express.Router()
 
@@ -21,10 +20,7 @@ router.post(
     const ticket = Ticket.build({ title, price, userId: req.currentUser.id })
     await ticket.save()
 
-    const publisher = await new TicketCreatedPublisher(
-      natsWrapper.client
-    ).init()
-    await publisher.publish({
+    await ticketCreatedPublisher.publish({
       id: ticket.id,
       title: ticket.title,
       price: ticket.price,
