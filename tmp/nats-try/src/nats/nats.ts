@@ -1,6 +1,9 @@
-// eslint-disable-next-line simple-import-sort/imports
-import type { NatsConnection, SubscriptionOptions } from 'nats'
-import { StringCodec, connect } from 'nats'
+import {
+  connect,
+  type NatsConnection,
+  StringCodec,
+  type SubscriptionOptions
+} from 'nats'
 
 class NatsBroker {
   private readonly url: string
