@@ -14,6 +14,7 @@ spec:
       containers:
         - name: nats
           image: nats:alpine
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               cpu: "0.5"
