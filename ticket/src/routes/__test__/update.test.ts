@@ -3,7 +3,7 @@ import request from 'supertest'
 
 import { app } from '@/app'
 import { ticketUpdatedPublisher } from '@/events/publishers/ticket-updated-publisher'
-import { type TicketDoc } from '@/models/ticket'
+import { Ticket, type TicketDoc } from '@/models/ticket'
 
 it('should not be able to access when not signed in', async () => {
   const id = new mongo.ObjectId().toString()
@@ -41,6 +41,29 @@ it(`should not be able to update other's user ticket`, async () => {
     .set('Cookie', global.fakeSignIn())
     .send({ title: 'ticket', price: 10 })
     .expect(404)
+})
+
+it(`should not be able to update when ticket already ordered`, async () => {
+  const cookie = global.fakeSignIn()
+
+  const createResponse = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({ title: 'ticket', price: 10 })
+    .expect(201)
+
+  // order
+  const id = createResponse.body?.id
+  await Ticket.findByIdAndUpdate(id, {
+    orderId: new mongo.ObjectId().toString()
+  })
+
+  // update
+  await request(app)
+    .put(`/api/tickets/${id}`)
+    .set('Cookie', cookie)
+    .send({ title: 'ticket', price: 10 })
+    .expect(400)
 })
 
 it(`should be able to update ticket`, async () => {

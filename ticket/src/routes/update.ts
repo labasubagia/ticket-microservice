@@ -1,4 +1,9 @@
-import { NotFoundError, requireAuth, validateRequest } from '@klstickets/common'
+import {
+  BadRequestError,
+  NotFoundError,
+  requireAuth,
+  validateRequest
+} from '@klstickets/common'
 import express, { type Request, type Response } from 'express'
 import { body, param } from 'express-validator'
 
@@ -24,6 +29,10 @@ router.put(
     })
     if (ticket == null) {
       throw new NotFoundError()
+    }
+
+    if (ticket.orderId != null) {
+      throw new BadRequestError('Cannot update ordered ticket')
     }
 
     const { title, price } = req.body
