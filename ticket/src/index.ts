@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import { app } from '@/app'
+import { OrderCancelledConsumer } from '@/events/consumers/order-cancelled-consumer'
 import { OrderCreatedConsumer } from '@/events/consumers/order-created-consumer'
 import { ticketCreatedPublisher } from '@/events/publishers/ticket-created-publisher'
 import { ticketUpdatedPublisher } from '@/events/publishers/ticket-updated-publisher'
@@ -48,6 +49,7 @@ const start = async (): Promise<void> => {
 
     // consumers
     void (await new OrderCreatedConsumer().init(natsWrapper.client)).consume()
+    void (await new OrderCancelledConsumer().init(natsWrapper.client)).consume()
   } catch (error) {
     console.error(error)
   }

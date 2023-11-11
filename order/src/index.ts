@@ -1,11 +1,11 @@
 import mongoose from 'mongoose'
 
 import { app } from '@/app'
+import { TicketCreatedConsumer } from '@/events/consumers/ticket-created-consumer'
+import { TicketUpdatedConsumer } from '@/events/consumers/ticket-updated-consumer'
+import { orderCancelledPublisher } from '@/events/publishers/order-cancelled-publisher'
+import { orderCreatedPublisher } from '@/events/publishers/order-created-publisher'
 import { natsWrapper } from '@/nats-wrapper'
-
-import { TicketCreatedConsumer } from './events/consumers/ticket-created-consumer'
-import { TicketUpdatedConsumer } from './events/consumers/ticket-updated-consumer'
-import { orderCreatedPublisher } from './events/publishers/order-created-publisher'
 
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
@@ -45,7 +45,7 @@ const start = async (): Promise<void> => {
 
     // publishers
     void orderCreatedPublisher.init(natsWrapper.client)
-    void orderCreatedPublisher.init(natsWrapper.client)
+    void orderCancelledPublisher.init(natsWrapper.client)
 
     // consumers
     void (await new TicketCreatedConsumer().init(natsWrapper.client)).consume()
