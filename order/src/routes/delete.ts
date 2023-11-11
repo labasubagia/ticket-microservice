@@ -23,7 +23,8 @@ router.delete(
     // publish event
     await orderCancelledPublisher.publish({
       id: order.id,
-      ticket: { id: order?.ticket?.id }
+      ticket: { id: order?.ticket?.id },
+      version: order.version
     })
 
     return res.status(204).send()
