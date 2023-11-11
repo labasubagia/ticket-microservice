@@ -6,6 +6,7 @@ import { Ticket, type TicketDoc } from '@/models/ticket'
 
 const buildTicket = async (): Promise<TicketDoc> => {
   const ticket = Ticket.build({
+    id: new mongoose.mongo.ObjectId().toString(),
     title: 'concert',
     price: 20
   })

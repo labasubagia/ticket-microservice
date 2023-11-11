@@ -20,7 +20,11 @@ it('returns error if the ticket does not exists', async () => {
 })
 
 it('returns error if ticket already reserved', async () => {
-  const ticket = Ticket.build({ title: 'concert', price: 10 })
+  const ticket = Ticket.build({
+    id: new mongoose.mongo.ObjectId().toString(),
+    title: 'concert',
+    price: 10
+  })
   await ticket.save()
 
   const order = Order.build({
@@ -39,7 +43,11 @@ it('returns error if ticket already reserved', async () => {
 })
 
 it('reserves a ticket', async () => {
-  const ticket = Ticket.build({ title: 'concert', price: 10 })
+  const ticket = Ticket.build({
+    id: new mongoose.mongo.ObjectId().toString(),
+    title: 'concert',
+    price: 10
+  })
   await ticket.save()
 
   await request(app)

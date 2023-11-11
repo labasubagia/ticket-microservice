@@ -20,7 +20,12 @@ it('returns error not found when no order exists', async () => {
 })
 
 it('returns error not found when it is not user data', async () => {
-  const ticket = Ticket.build({ title: 'concert', price: 200 })
+  const ticket = Ticket.build({
+    id: new mongoose.mongo.ObjectId().toString(),
+
+    title: 'concert',
+    price: 200
+  })
   await ticket.save()
   const { body: order } = await request(app)
     .post('/api/orders')
@@ -38,7 +43,11 @@ it('returns error not found when it is not user data', async () => {
 it('success delete (cancel order)', async () => {
   const cookie = global.fakeSignIn()
 
-  const ticket = Ticket.build({ title: 'concert', price: 200 })
+  const ticket = Ticket.build({
+    id: new mongoose.mongo.ObjectId().toString(),
+    title: 'concert',
+    price: 200
+  })
   await ticket.save()
   const { body: order } = await request(app)
     .post('/api/orders')
