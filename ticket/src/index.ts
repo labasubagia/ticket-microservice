@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import { app } from '@/app'
+import { OrderCreatedConsumer } from '@/events/consumers/order-created-consumer'
 import { ticketCreatedPublisher } from '@/events/publishers/ticket-created-publisher'
 import { ticketUpdatedPublisher } from '@/events/publishers/ticket-updated-publisher'
 import { natsWrapper } from '@/nats-wrapper'
@@ -17,7 +18,7 @@ const start = async (): Promise<void> => {
   }
 
   const natsServers = (process.env.NATS_SERVERS ?? '').split(',')
-  if (natsServers.length == 0) {
+  if (natsServers.length === 0) {
     throw new Error('NATS_SERVERS must be defined')
   }
 
@@ -34,12 +35,19 @@ const start = async (): Promise<void> => {
       process.exit()
     })
 
-    process.on('SIGINT', () => natsWrapper.client.close())
-    process.on('SIGTERM', () => natsWrapper.client.close())
+    process.on('SIGINT', async () => {
+      await natsWrapper.client.close()
+    })
+    process.on('SIGTERM', async () => {
+      await natsWrapper.client.close()
+    })
 
     // publishers
     void ticketCreatedPublisher.init(natsWrapper.client)
     void ticketUpdatedPublisher.init(natsWrapper.client)
+
+    // consumers
+    void (await new OrderCreatedConsumer().init(natsWrapper.client)).consume()
   } catch (error) {
     console.error(error)
   }
