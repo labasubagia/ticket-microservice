@@ -16,9 +16,17 @@ export abstract class Consumer<T extends Event> {
 
   abstract onMessage(data: T["data"], message: JsMsg): Promise<void>;
 
-  constructor(private client: NatsConnection) {}
+  private _client?: NatsConnection;
+  get client(): NatsConnection {
+    if (!this._client) {
+      throw new Error("please call init() first");
+    }
+    return this._client;
+  }
 
-  async init() {
+  async init(client: NatsConnection) {
+    this._client = client;
+
     const jsm = await this.client.jetstreamManager();
     const js = this.client.jetstream();
 
@@ -79,7 +87,7 @@ export abstract class Consumer<T extends Event> {
   }
 
   async consume() {
-    const js = await this.client.jetstream();
+    const js = this.client.jetstream();
     const consumer = await js.consumers.get(this.topic, this.queueGroupName);
     await consumer.consume({
       callback: async (msg) => {

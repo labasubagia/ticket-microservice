@@ -6,10 +6,10 @@ const URL = "http://0.0.0.0:4222";
 
 const run = async () => {
   console.clear();
-  const nc = await connect({ servers: URL });
+  const client = await connect({ servers: URL });
 
-  const c1 = await new TicketCreatedConsumer(nc).init();
-  const c2 = await new TicketUpdatedConsumer(nc).init();
+  const c1 = await new TicketCreatedConsumer().init(client);
+  const c2 = await new TicketUpdatedConsumer().init(client);
 
   console.log("waiting for messages...");
   await Promise.all([c1.consume(), c2.consume()]);

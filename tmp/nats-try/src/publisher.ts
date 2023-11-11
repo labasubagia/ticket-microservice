@@ -6,10 +6,10 @@ import { TicketUpdatedPublisher } from "./jetstream/ticket-updated-event";
 const URL = "http://0.0.0.0:4222";
 
 const run = async () => {
-  const nc = await connect({ servers: URL });
+  const client = await connect({ servers: URL });
   let count = 0;
 
-  const publisher1 = await new TicketCreatedPublisher(nc).init();
+  const publisher1 = await new TicketCreatedPublisher().init(client);
   const proms = Array.from({ length: 5 }).map((_v, idx) => {
     count++;
     return publisher1.publish({
@@ -21,7 +21,7 @@ const run = async () => {
   });
   await Promise.all(proms);
 
-  const publisher2 = await new TicketUpdatedPublisher(nc).init();
+  const publisher2 = await new TicketUpdatedPublisher().init(client);
   const proms2 = Array.from({ length: 5 }).map((_v, idx) => {
     count++;
     return publisher2.publish({
@@ -33,7 +33,7 @@ const run = async () => {
   });
   await Promise.all(proms2);
 
-  await nc.drain();
+  await client.drain();
 };
 
 run();
