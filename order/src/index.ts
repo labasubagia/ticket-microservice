@@ -5,6 +5,7 @@ import { natsWrapper } from '@/nats-wrapper'
 
 import { TicketCreatedConsumer } from './events/consumers/ticket-created-consumer'
 import { TicketUpdatedConsumer } from './events/consumers/ticket-updated-consumer'
+import { orderCreatedPublisher } from './events/publishers/order-created-publisher'
 
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
@@ -42,9 +43,13 @@ const start = async (): Promise<void> => {
       await natsWrapper.client.close()
     })
 
+    // publishers
+    void orderCreatedPublisher.init(natsWrapper.client)
+    void orderCreatedPublisher.init(natsWrapper.client)
+
     // consumers
-    void (await new TicketCreatedConsumer(natsWrapper.client).init()).consume()
-    void (await new TicketUpdatedConsumer(natsWrapper.client).init()).consume()
+    void (await new TicketCreatedConsumer().init(natsWrapper.client)).consume()
+    void (await new TicketUpdatedConsumer().init(natsWrapper.client)).consume()
   } catch (error) {
     console.error(error)
   }

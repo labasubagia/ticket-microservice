@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import request from 'supertest'
 
 import { app } from '@/app'
+import { orderCancelledPublisher } from '@/events/publishers/order-cancelled-publisher'
 import { Ticket } from '@/models/ticket'
 
 it('returns error when user not logged in', async () => {
@@ -71,4 +72,26 @@ it('success delete (cancel order)', async () => {
   expect(updated?.status).toEqual(OrderStatus.Cancelled)
 })
 
-it.todo('publish event after deleted (cancel order)')
+it('publish event after deleted (cancel order)', async () => {
+  const cookie = global.fakeSignIn()
+
+  const ticket = Ticket.build({
+    id: new mongoose.mongo.ObjectId().toString(),
+    title: 'concert',
+    price: 200
+  })
+  await ticket.save()
+  const { body: order } = await request(app)
+    .post('/api/orders')
+    .set('Cookie', cookie)
+    .send({ ticketId: ticket.id })
+    .expect(201)
+
+  await request(app)
+    .delete(`/api/orders/${order?.id}`)
+    .set('Cookie', cookie)
+    .send()
+    .expect(204)
+
+  expect(orderCancelledPublisher.publish).toHaveBeenCalled()
+})
