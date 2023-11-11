@@ -1,10 +1,9 @@
 import { type OrderCreatedEvent, OrderStatus } from '@klstickets/common'
 import { mongo } from 'mongoose'
 
+import { OrderCreatedConsumer } from '@/events/consumers/order-created-consumer'
 import { ticketUpdatedPublisher } from '@/events/publishers/ticket-updated-publisher'
 import { Ticket } from '@/models/ticket'
-
-import { OrderCreatedConsumer } from '../order-created-consumer'
 
 const EXPIRATION_WINDOW_MINUTES = 15
 
