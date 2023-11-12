@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@klstickets/common": "^1.0.18",
+    "@klstickets/common": "^1.0.20",
     "@types/cookie-session": "^2.0.46",
     "@types/express": "^4.17.20",
     "@types/jsonwebtoken": "^9.0.4",
