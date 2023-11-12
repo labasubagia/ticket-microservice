@@ -36,13 +36,6 @@ const start = async (): Promise<void> => {
       process.exit()
     })
 
-    process.on('SIGINT', async () => {
-      await natsWrapper.client.close()
-    })
-    process.on('SIGTERM', async () => {
-      await natsWrapper.client.close()
-    })
-
     // publishers
     void ticketCreatedPublisher.init(natsWrapper.client)
     void ticketUpdatedPublisher.init(natsWrapper.client)
@@ -50,12 +43,27 @@ const start = async (): Promise<void> => {
     // consumers
     void (await new OrderCreatedConsumer().init(natsWrapper.client)).consume()
     void (await new OrderCancelledConsumer().init(natsWrapper.client)).consume()
+
+    // server
+    const server = app.listen(3000, () => {
+      console.log('listening to port 3000!')
+    })
+
+    const onClose = async (signal: NodeJS.Signals): Promise<void> => {
+      await natsWrapper.client.close()
+      await mongoose.connection.close()
+      server.close(() => {
+        console.log('Http server closed')
+        process.exit()
+      })
+    }
+
+    process.on('SIGINT', onClose)
+    process.on('SIGTERM', onClose)
   } catch (error) {
     console.error(error)
+    process.exit()
   }
-  app.listen(3000, () => {
-    console.log('listening to port 3000!')
-  })
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
