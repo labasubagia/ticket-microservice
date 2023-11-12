@@ -1,3 +1,5 @@
+import { OrderCreatedConsumer } from '@/events/consumers/order-created-consumer'
+import { expirationCompletePublisher } from '@/events/publishers/expiration-complete-publisher'
 import { natsWrapper } from '@/nats-wrapper'
 
 const start = async (): Promise<void> => {
@@ -20,6 +22,14 @@ const start = async (): Promise<void> => {
       process.exit()
     }
 
+    // publishers
+    void expirationCompletePublisher.init(natsWrapper.client)
+
+    // consumers
+    void (await new OrderCreatedConsumer().init(natsWrapper.client)).consume()
+
+    console.log('expiration service started')
+
     process.on('SIGINT', onClose)
     process.on('SIGTERM', onClose)
   } catch (error) {
@@ -28,5 +38,4 @@ const start = async (): Promise<void> => {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-start()
+void start()
