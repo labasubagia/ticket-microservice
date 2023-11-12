@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expiration
+  template:
+    metadata:
+      labels:
+        app: expiration
+    spec:
+      containers:
+        - name: expiration
+          image: dreamcheck/expiration
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "256Mi"
+          env:
+            - name: NATS_SERVERS
+              value: http://nats-srv:4222
+            - name: REDIS_HOST
+              value: http://expiration-redis-srv

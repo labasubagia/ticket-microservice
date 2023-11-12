@@ -33,6 +33,14 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: dreamcheck/expiration
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     - image: dreamcheck/ticket-client
       context: client
       docker:
