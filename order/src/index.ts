@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
 import { app } from '@/app'
+import { ExpirationCompleteConsumer } from '@/events/consumers/expiration-complete-consumer'
 import { TicketCreatedConsumer } from '@/events/consumers/ticket-created-consumer'
 import { TicketUpdatedConsumer } from '@/events/consumers/ticket-updated-consumer'
 import { orderCancelledPublisher } from '@/events/publishers/order-cancelled-publisher'
@@ -37,12 +38,20 @@ const start = async (): Promise<void> => {
     })
 
     // publishers
-    void orderCreatedPublisher.init(natsWrapper.client)
-    void orderCancelledPublisher.init(natsWrapper.client)
+    const publishers = [orderCreatedPublisher, orderCancelledPublisher]
+    publishers.forEach((publisher) => {
+      void publisher.init(natsWrapper.client)
+    })
 
     // consumers
-    void (await new TicketCreatedConsumer().init(natsWrapper.client)).consume()
-    void (await new TicketUpdatedConsumer().init(natsWrapper.client)).consume()
+    const consumers = [
+      new TicketCreatedConsumer(),
+      new TicketUpdatedConsumer(),
+      new ExpirationCompleteConsumer()
+    ]
+    consumers.forEach(async (consumer) => {
+      void (await consumer.init(natsWrapper.client)).consume()
+    })
 
     // server
     const server = app.listen(3000, () => {
