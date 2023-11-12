@@ -16,8 +16,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@klstickets/common": "^1.0.18",
-    "bull": "^4.11.5",
+    "@klstickets/common": "^1.0.20",
+    "bullmq": "^4.13.2",
     "nats": "^2.18.0",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0"
