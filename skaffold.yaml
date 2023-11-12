@@ -41,6 +41,14 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: dreamcheck/payment
+      context: payment
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
     - image: dreamcheck/ticket-client
       context: client
       docker:
