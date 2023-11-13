@@ -3,8 +3,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
 
 declare global {
-  function fakeSignIn(): string
+  function fakeSignIn(id?: string): string
 }
+
+jest.mock('@/stripe')
 
 let mongo: MongoMemoryServer
 
@@ -29,8 +31,9 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-globalThis.fakeSignIn = () => {
-  const id = new mongoose.mongo.ObjectId()
+globalThis.fakeSignIn = (
+  id: string = new mongoose.mongo.ObjectId().toString()
+) => {
   const payload = { id, email: 'test@test.com' }
   const token = jwt.sign(payload, process.env.JWT_KEY ?? '')
   const session = { jwt: token }
