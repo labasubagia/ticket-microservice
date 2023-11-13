@@ -4,6 +4,8 @@ import { currentUser, errorHandler, NotFoundError } from '@klstickets/common'
 import cookieSession from 'cookie-session'
 import express, { json } from 'express'
 
+import { createChargeRouter } from '@/routes/create'
+
 const app = express()
 app.set('trust proxy', true)
 app.use(json())
@@ -14,6 +16,8 @@ app.use(
   })
 )
 app.use(currentUser)
+
+app.use(createChargeRouter)
 
 app.use(async (req, res, next) => {
   throw new NotFoundError()

@@ -5,6 +5,7 @@ import { natsWrapper } from '@/nats-wrapper'
 
 import { OrderCancelledConsumer } from './events/consumers/order-cancelled-consumer'
 import { OrderCreatedConsumer } from './events/consumers/order-created-consumer'
+import { paymentCreatedPublisher } from './events/publishers/payment-created-publisher'
 
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
@@ -33,6 +34,12 @@ const start = async (): Promise<void> => {
     natsWrapper.client.closed().catch((error) => {
       console.log('NATS closed', error.message)
       process.exit()
+    })
+
+    // publishers
+    const publishers = [paymentCreatedPublisher]
+    publishers.forEach(async (publisher) => {
+      await publisher.init(natsWrapper.client)
     })
 
     // consumers
