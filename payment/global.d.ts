@@ -1,6 +1,9 @@
 import { type Request as ExpressRequest } from 'express'
 
-import { type UserPayload } from './src/middlewares/current-user'
+interface UserPayload {
+  id?: string
+  email?: string
+}
 
 declare module 'express' {
   interface Request extends ExpressRequest {
