@@ -7,6 +7,7 @@ declare global {
 }
 
 jest.mock('@/stripe')
+jest.mock('@/events/publishers/payment-created-publisher')
 
 let mongo: MongoMemoryServer
 
