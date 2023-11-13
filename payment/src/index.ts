@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 import { app } from '@/app'
 import { natsWrapper } from '@/nats-wrapper'
 
+import { OrderCreatedConsumer } from './events/consumers/order-created-consumer'
+
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
   if (jwtKey === '') {
@@ -30,6 +32,13 @@ const start = async (): Promise<void> => {
     natsWrapper.client.closed().catch((error) => {
       console.log('NATS closed', error.message)
       process.exit()
+    })
+
+    // consumers
+    const consumers = [new OrderCreatedConsumer()]
+    consumers.forEach(async (consumer) => {
+      await consumer.init(natsWrapper.client)
+      void consumer.consume()
     })
 
     // server
