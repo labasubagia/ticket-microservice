@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import { app } from '@/app'
 import { natsWrapper } from '@/nats-wrapper'
 
+import { OrderCancelledConsumer } from './events/consumers/order-cancelled-consumer'
 import { OrderCreatedConsumer } from './events/consumers/order-created-consumer'
 
 const start = async (): Promise<void> => {
@@ -35,7 +36,7 @@ const start = async (): Promise<void> => {
     })
 
     // consumers
-    const consumers = [new OrderCreatedConsumer()]
+    const consumers = [new OrderCreatedConsumer(), new OrderCancelledConsumer()]
     consumers.forEach(async (consumer) => {
       await consumer.init(natsWrapper.client)
       void consumer.consume()
