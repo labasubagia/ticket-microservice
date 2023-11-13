@@ -8,6 +8,8 @@ import { orderCancelledPublisher } from '@/events/publishers/order-cancelled-pub
 import { orderCreatedPublisher } from '@/events/publishers/order-created-publisher'
 import { natsWrapper } from '@/nats-wrapper'
 
+import { PaymentCreatedConsumer } from './events/consumers/payment-created-consumer'
+
 const start = async (): Promise<void> => {
   const jwtKey = process.env.JWT_KEY ?? ''
   if (jwtKey === '') {
@@ -39,18 +41,20 @@ const start = async (): Promise<void> => {
 
     // publishers
     const publishers = [orderCreatedPublisher, orderCancelledPublisher]
-    publishers.forEach((publisher) => {
-      void publisher.init(natsWrapper.client)
+    publishers.forEach(async (publisher) => {
+      await publisher.init(natsWrapper.client)
     })
 
     // consumers
     const consumers = [
       new TicketCreatedConsumer(),
       new TicketUpdatedConsumer(),
-      new ExpirationCompleteConsumer()
+      new ExpirationCompleteConsumer(),
+      new PaymentCreatedConsumer()
     ]
     consumers.forEach(async (consumer) => {
-      void (await consumer.init(natsWrapper.client)).consume()
+      await consumer.init(natsWrapper.client)
+      void consumer.consume()
     })
 
     // server
