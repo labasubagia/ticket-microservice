@@ -1,48 +1,55 @@
-import { type NatsConnection, NatsError, type StreamInfo } from 'nats'
+import { type NatsConnection, NatsError } from 'nats'
 
 import { type Subject, type Topic } from './types'
 
-const CodeStreamNotFound = 10059
+export enum StreamError {
+  NotFound = 10059,
+  ExistsConfigDiff = 10058
+}
 
 class StreamMaker {
   constructor(
     private readonly client: NatsConnection,
     private readonly topic: Topic,
     private readonly subject: Subject,
-    private readonly retryMs: number = 500,
-    private maxRetry: number = 5
+    private readonly retryInMs: number = 500,
+    private readonly maxAttempt: number = 10
   ) {}
 
-  async make(): Promise<StreamInfo> {
-    if (this.maxRetry <= 0) {
-      throw new Error('Maximum stream init retry exceeded')
+  async make(): Promise<void> {
+    for (let attempt = 1; attempt <= this.maxAttempt; attempt++) {
+      const msg = `init ${this.topic}/${this.subject} stream attempt-${attempt}`
+      try {
+        await this.upsert()
+        console.log(msg, 'OK')
+        break
+      } catch (error) {
+        console.log(msg, 'failed with error:', (error as Error).message)
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, this.retryInMs))
+      }
     }
-    this.maxRetry -= 1
+  }
 
+  async upsert(): Promise<void> {
     const jsm = await this.client.jetstreamManager()
-
     try {
-      // update stream when already exists
-      const stream = await jsm.streams.get(this.topic)
-      const info = await stream.info()
-
-      let subjects = [...info.config.subjects, this.subject as string]
-      subjects = [...new Set(subjects)].sort()
-      info.config.subjects = subjects
-
-      return await jsm.streams.update(this.topic, info.config)
+      // create
+      await jsm.streams.add({ name: this.topic, subjects: [this.subject] })
     } catch (error) {
       if (error instanceof NatsError) {
         const errCode = error?.api_error?.err_code
-        if (errCode === CodeStreamNotFound) {
-          // create new stream
-          // if error, retry in retryMs duration
-          return await jsm.streams
-            .add({ name: this.topic, subjects: [this.subject] })
-            .catch(async () => {
-              await new Promise((resolve) => setTimeout(resolve, this.retryMs))
-              return await this.make()
-            })
+
+        // update
+        if (errCode === StreamError.ExistsConfigDiff) {
+          const stream = await jsm.streams.get(this.topic)
+          const { config } = await stream.info()
+          if (config.subjects.includes(this.subject)) return
+
+          config.subjects.push(this.subject)
+          config.subjects = [...new Set(config.subjects)].sort()
+          await jsm.streams.update(this.topic, config)
+          return
         }
       }
       throw error

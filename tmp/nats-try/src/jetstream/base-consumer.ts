@@ -61,7 +61,7 @@ export abstract class Consumer<T extends Event> {
               (error as Error).message
             } and payload ${JSON.stringify(decoded)}, retry in ${
               this.failRetryWaitMs
-            }`
+            }ms`
           )
           msg.nak(this.failRetryWaitMs)
         }
