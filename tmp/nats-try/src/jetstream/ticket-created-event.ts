@@ -25,6 +25,6 @@ export class TicketCreatedConsumer extends Consumer<TicketCreatedEvent> {
   failRetryWaitMs: number = 500
 
   async onMessage(data: TicketCreatedEvent['data']): Promise<void> {
-    console.log(`received created`, data)
+    console.log(data)
   }
 }

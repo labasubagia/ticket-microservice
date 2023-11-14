@@ -24,6 +24,6 @@ export class TicketUpdatedConsumer extends Consumer<TicketUpdatedEvent> {
   failRetryWaitMs: number = 500
 
   async onMessage(data: TicketUpdatedEvent['data']): Promise<void> {
-    console.log(`received updated`, data)
+    console.log(data)
   }
 }
