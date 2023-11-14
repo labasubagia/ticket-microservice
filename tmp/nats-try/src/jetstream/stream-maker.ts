@@ -9,10 +9,16 @@ class StreamMaker {
     private readonly client: NatsConnection,
     private readonly topic: Topic,
     private readonly subject: Subject,
-    private readonly retryMs: number = 100
+    private readonly retryMs: number = 500,
+    private maxRetry: number = 5
   ) {}
 
   async make(): Promise<StreamInfo> {
+    if (this.maxRetry <= 0) {
+      throw new Error('Maximum stream init retry exceeded')
+    }
+    this.maxRetry -= 1
+
     const jsm = await this.client.jetstreamManager()
 
     try {
@@ -32,10 +38,7 @@ class StreamMaker {
           // create new stream
           // if error, retry in retryMs duration
           return await jsm.streams
-            .add({
-              name: this.topic,
-              subjects: [this.subject]
-            })
+            .add({ name: this.topic, subjects: [this.subject] })
             .catch(async () => {
               await new Promise((resolve) => setTimeout(resolve, this.retryMs))
               return await this.make()

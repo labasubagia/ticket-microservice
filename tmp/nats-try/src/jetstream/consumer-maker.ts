@@ -16,10 +16,16 @@ class ConsumerMaker {
     private readonly topic: Topic,
     private readonly subject: Subject,
     private readonly queueGroupName: string,
-    private readonly retryMs: number = 100
+    private readonly retryMs: number = 500,
+    private maxRetry: number = 5
   ) {}
 
   async make(): Promise<ConsumerInfo> {
+    if (this.maxRetry <= 0) {
+      throw new Error('Maximum consumer init retry exceeded')
+    }
+    this.maxRetry -= 1
+
     const jsm = await this.client.jetstreamManager()
     const js = this.client.jetstream()
 
