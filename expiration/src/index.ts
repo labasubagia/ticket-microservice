@@ -23,10 +23,17 @@ const start = async (): Promise<void> => {
     }
 
     // publishers
-    void expirationCompletePublisher.init(natsWrapper.client)
+    const publishers = [expirationCompletePublisher]
+    publishers.forEach(async (publisher) => {
+      await publisher.init(natsWrapper.client)
+    })
 
     // consumers
-    void (await new OrderCreatedConsumer().init(natsWrapper.client)).consume()
+    const consumers = [new OrderCreatedConsumer()]
+    consumers.forEach(async (consumer) => {
+      await consumer.init(natsWrapper.client)
+      void consumer.consume()
+    })
 
     console.log('expiration service started')
 

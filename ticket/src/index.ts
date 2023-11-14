@@ -37,12 +37,17 @@ const start = async (): Promise<void> => {
     })
 
     // publishers
-    void ticketCreatedPublisher.init(natsWrapper.client)
-    void ticketUpdatedPublisher.init(natsWrapper.client)
+    const publishers = [ticketCreatedPublisher, ticketUpdatedPublisher]
+    publishers.forEach(async (publisher) => {
+      await publisher.init(natsWrapper.client)
+    })
 
     // consumers
-    void (await new OrderCreatedConsumer().init(natsWrapper.client)).consume()
-    void (await new OrderCancelledConsumer().init(natsWrapper.client)).consume()
+    const consumers = [new OrderCreatedConsumer(), new OrderCancelledConsumer()]
+    consumers.forEach(async (consumer) => {
+      await consumer.init(natsWrapper.client)
+      void consumer.consume()
+    })
 
     // server
     const server = app.listen(3000, () => {
