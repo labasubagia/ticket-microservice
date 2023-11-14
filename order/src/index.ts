@@ -41,9 +41,9 @@ const start = async (): Promise<void> => {
 
     // publishers
     const publishers = [orderCreatedPublisher, orderCancelledPublisher]
-    publishers.forEach(async (publisher) => {
+    for (const publisher of publishers) {
       await publisher.init(natsWrapper.client)
-    })
+    }
 
     // consumers
     const consumers = [
@@ -52,10 +52,10 @@ const start = async (): Promise<void> => {
       new ExpirationCompleteConsumer(),
       new PaymentCreatedConsumer()
     ]
-    consumers.forEach(async (consumer) => {
+    for (const consumer of consumers) {
       await consumer.init(natsWrapper.client)
       void consumer.consume()
-    })
+    }
 
     // server
     const server = app.listen(3000, () => {
