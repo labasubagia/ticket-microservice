@@ -24,20 +24,14 @@ export abstract class Consumer<T extends Event> {
   async init(client: NatsConnection): Promise<this> {
     this._client = client
 
-    const streamMaker = new StreamMaker(
-      client,
-      this.topic,
-      this.subject,
-      this.initRetryMs
-    )
+    const streamMaker = new StreamMaker(client, this.topic, this.subject)
     await streamMaker.make()
 
     const consumerMaker = new ConsumerMaker(
       client,
       this.topic,
       this.subject,
-      this.queueGroupName,
-      this.initRetryMs
+      this.queueGroupName
     )
     await consumerMaker.make()
 

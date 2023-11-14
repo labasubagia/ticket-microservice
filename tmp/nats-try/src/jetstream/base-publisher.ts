@@ -8,7 +8,6 @@ export abstract class Publisher<T extends Event> {
   abstract topic: T['topic']
   abstract subject: T['subject']
   private readonly stringCodec = StringCodec()
-  protected initRetryMs: number = 100
 
   private _client?: NatsConnection
   get client(): NatsConnection {
@@ -20,15 +19,8 @@ export abstract class Publisher<T extends Event> {
 
   async init(client: NatsConnection): Promise<this> {
     this._client = client
-
-    const streamMaker = new StreamMaker(
-      client,
-      this.topic,
-      this.subject,
-      this.initRetryMs
-    )
+    const streamMaker = new StreamMaker(client, this.topic, this.subject)
     await streamMaker.make()
-
     return this
   }
 
