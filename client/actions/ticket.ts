@@ -1,23 +1,27 @@
 import api from '@/lib/fetch';
-import { number, string } from 'zod';
+import { Ticket } from '@/types/ticket';
 
 export const list = async () => {
-  return api.get('/api/tickets');
+  const res = await api.get('/api/tickets');
+  const data = ((await res.data) ?? []) as Ticket[];
+  return data;
 };
 
 export const detail = async (id: string) => {
-  return api.get(`/api/tickets/${id}`);
+  const res = api.get(`/api/tickets/${id}`);
+  const data = (await res).data as Ticket | null;
+  return data;
 };
 
-interface Payload {
+export interface TicketPayload {
   title: string;
-  prince: number;
+  price: number;
 }
 
-export const create = async (payload: Payload) => {
+export const create = async (payload: TicketPayload) => {
   return api.post(`/api/tickets`, payload);
 };
 
-export const update = async (id: string, payload: Payload) => {
+export const update = async (id: string, payload: TicketPayload) => {
   return api.put(`/api/tickets/${id}`, payload);
 };
