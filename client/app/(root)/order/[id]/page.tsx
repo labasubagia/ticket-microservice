@@ -3,12 +3,17 @@
 import { getCurrentUser } from '@/actions/auth';
 import { detailOrder } from '@/actions/order';
 import { AlertError } from '@/components/alert-error';
-import { Button } from '@/components/ui/button';
-import { Order } from '@/types/order';
-import { ReloadIcon } from '@radix-ui/react-icons';
+import StripeCheckout from 'react-stripe-checkout';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { PayPayload, createPayment } from '@/actions/payment';
+import {
+  Order,
+  OrderStatus,
+  getOrderExpiresDiff,
+  isOrderPending,
+} from '@/types/order';
 
 export default function OrderDetailPage() {
   const params = useParams();
@@ -25,21 +30,16 @@ export default function OrderDetailPage() {
   const { data: currentUser } = queryCurrentUser;
 
   const queryOrderDetail = useQuery({
-    queryKey: ['orderDetail', id],
+    queryKey: ['detailOrder', id],
     queryFn: () => detailOrder(id),
   });
   const { data: order } = queryOrderDetail;
-
-  const mutation = useMutation({});
-
-  const onPay = async (order: Order) => {};
 
   useEffect(() => {
     if (!order) return;
 
     const findTimeLeft = () => {
-      const msLeft = new Date(order.expiresAt).getTime() - new Date().getTime();
-      setTimeLeft(Math.round(msLeft / 1000));
+      setTimeLeft(Math.round(getOrderExpiresDiff(order) / 1000));
     };
 
     findTimeLeft();
@@ -50,6 +50,28 @@ export default function OrderDetailPage() {
     };
   }, [order]);
 
+  const mutation = useMutation({
+    mutationFn: createPayment,
+  });
+
+  const onPaid = (payload: PayPayload) => {
+    mutation.mutate(payload, {
+      async onSuccess(data, variables, context) {
+        await queryOrderDetail.refetch();
+      },
+    });
+  };
+
+  const Status: React.FC<{ order: Order }> = ({ order }) => {
+    if (order.status == OrderStatus.Complete) {
+      return <div>Order Already Paid</div>;
+    }
+    if (order.status == OrderStatus.Cancelled) {
+      return <div>Order Expired</div>;
+    }
+    return <div>Time Remaining to Pay the ticket: {timeLeft} seconds</div>;
+  };
+
   return (
     <>
       <h1 className="pb-2 text-xl">Order Detail</h1>
@@ -58,25 +80,19 @@ export default function OrderDetailPage() {
 
       {order && order.userId === currentUser?.id && (
         <div>
-          {timeLeft > 0 ? (
-            <p>Time Remaining to Pay the ticket: {timeLeft} seconds</p>
-          ) : (
-            <div>Order Expired</div>
-          )}
+          <Status order={order} />
 
           <p>{order.ticket?.title}</p>
           <p>${order.ticket?.price}</p>
 
-          <Button
-            className="mt-2"
-            disabled={mutation.isPending}
-            onClick={() => onPay(order as Order)}
-          >
-            {mutation.isPending && (
-              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Pay
-          </Button>
+          {isOrderPending(order) && (
+            <StripeCheckout
+              token={({ id }) => onPaid({ orderId: order.id, token: id })}
+              stripeKey={process.env.NEXT_PUBLIC_STRIPE_KEY as string}
+              amount={order.ticket.price * 100}
+              email={currentUser?.email}
+            />
+          )}
         </div>
       )}
     </>
