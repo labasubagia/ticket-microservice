@@ -9,7 +9,7 @@ build:
   local:
     push: false
   artifacts:
-    - image: dreamcheck/ticket-auth
+    - image: dreamcheck/auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -49,7 +49,7 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: dreamcheck/ticket-client
+    - image: dreamcheck/client
       context: client
       docker:
         dockerfile: Dockerfile

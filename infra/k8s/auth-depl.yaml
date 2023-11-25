@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: dreamcheck/ticket-auth
+          image: dreamcheck/auth
           resources:
             limits:
               cpu: "0.5"
