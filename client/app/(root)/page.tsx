@@ -1,7 +1,7 @@
 'use client';
 
 import { getCurrentUser } from '@/actions/auth';
-import { list } from '@/actions/ticket';
+import { listTicket } from '@/actions/ticket';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
@@ -16,18 +16,13 @@ export default function ListTicketPage() {
 
   const listTicketQuery = useQuery({
     queryKey: ['listTicket'],
-    queryFn: list,
+    queryFn: listTicket,
   });
 
   return (
     <div className="p-4 px-8">
       <div className="flex items-center justify-between pb-4">
         <h1 className="text-xl">Tickets</h1>
-        {currentUserQuery.data && (
-          <Button asChild>
-            <Link href={'/ticket/create'}>Sell My Ticket</Link>
-          </Button>
-        )}
       </div>
 
       {listTicketQuery.data?.map((ticket) => (
