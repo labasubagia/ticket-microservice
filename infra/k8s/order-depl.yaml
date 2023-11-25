@@ -26,7 +26,7 @@ spec:
                   name: jwt-secret
                   key: JWT_KEY
             - name: MONGO_URI
-              value: mongodb://order-mongo-srv:27017/order
+              value: mongodb://mongo-srv:27017/order
             - name: NATS_SERVERS
               value: http://nats-srv:4222
 ---

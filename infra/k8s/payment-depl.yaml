@@ -31,7 +31,7 @@ spec:
                   name: stripe-secret
                   key: SECRET_KEY
             - name: MONGO_URI
-              value: mongodb://payment-mongo-srv:27017/payment
+              value: mongodb://mongo-srv:27017/payment
             - name: NATS_SERVERS
               value: http://nats-srv:4222
 ---
