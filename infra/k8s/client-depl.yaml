@@ -16,12 +16,17 @@ spec:
         - name: client
           image: dreamcheck/ticket-client
           resources:
-            limits:
-              cpu: ".5"
-              memory: "1024Mi"
+            # limits:
+            #   cpu: ".5"
+            #   memory: "1024Mi"
           env:
             - name: API_URL
               value: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local
+            - name: NEXT_PUBLIC_STRIPE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: PUBLIC_KEY
 ---
 apiVersion: v1
 kind: Service
