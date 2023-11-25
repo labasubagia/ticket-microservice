@@ -2,10 +2,9 @@
 
 import { getCurrentUser } from '@/actions/auth';
 import { createOrder } from '@/actions/order';
-import { detail } from '@/actions/ticket';
+import { detailTicket } from '@/actions/ticket';
 import { AlertError } from '@/components/alert-error';
 import { Button } from '@/components/ui/button';
-import { Order } from '@/types/order';
 import { Ticket } from '@/types/ticket';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -25,8 +24,8 @@ export default function TicketDetailPage() {
   const { data: currentUser } = queryCurrentUser;
 
   const queryTicketDetail = useQuery({
-    queryKey: ['ticketDetail', id],
-    queryFn: () => detail(id),
+    queryKey: ['detailTicket', id],
+    queryFn: () => detailTicket(id),
   });
   const { data: ticket } = queryTicketDetail;
 

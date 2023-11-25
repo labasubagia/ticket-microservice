@@ -1,6 +1,6 @@
 'use client';
 
-import { TicketPayload, detail, update } from '@/actions/ticket';
+import { TicketPayload, detailTicket, updateTicket } from '@/actions/ticket';
 import { AlertError } from '@/components/alert-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,8 +40,8 @@ export default function EditTicketPage() {
   });
 
   const query = useQuery({
-    queryKey: ['detailTicker', id],
-    queryFn: () => detail(id),
+    queryKey: ['detailTicket', id],
+    queryFn: () => detailTicket(id),
   });
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function EditTicketPage() {
     }: {
       id: string;
       payload: TicketPayload;
-    }) => update(id, payload),
+    }) => updateTicket(id, payload),
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {

@@ -1,6 +1,6 @@
 'use client';
 
-import { create } from '@/actions/ticket';
+import { createTicket } from '@/actions/ticket';
 import { AlertError } from '@/components/alert-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -35,7 +35,7 @@ export default function CreateTicketPage() {
     },
   });
 
-  const mutation = useMutation({ mutationFn: create });
+  const mutation = useMutation({ mutationFn: createTicket });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values, {
