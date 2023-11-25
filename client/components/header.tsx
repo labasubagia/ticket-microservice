@@ -15,8 +15,13 @@ export const Header = ({
   currentUser: User | null | undefined;
 }) => {
   let navigation: Nav[] = [
+    // Guest
     { name: 'Sign Up', path: '/sign-up', isShow: !currentUser },
     { name: 'Sign In', path: '/sign-in', isShow: !currentUser },
+
+    // User
+    { name: 'Sell My Ticket', path: '/ticket/create', isShow: !!currentUser },
+    { name: 'My Order', path: '/order', isShow: !!currentUser },
     { name: 'Sign Out', path: '/sign-out', isShow: !!currentUser },
   ];
   navigation = navigation.filter((nav) => nav.isShow);
