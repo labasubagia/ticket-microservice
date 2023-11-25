@@ -1,0 +1,38 @@
+name: test-auth
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "auth/*"
+  pull_request:
+    paths:
+      - "auth/*"
+
+jobs:
+  test-auth-service:
+    name: Test Auth Service
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./auth
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: install node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: auth/pnpm-lock.yaml
+
+      - name: install deps
+        run: pnpm install
+
+      - name: test
+        run: pnpm run test
